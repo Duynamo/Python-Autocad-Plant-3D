@@ -15,12 +15,16 @@ from varmain.custom import *  #type: ignore
 @param (L=LENGTH, TooltipShort="Length (Face to Face)") #type: ignore
 @param (D=LENGTH, TooltipShort="Flange Diameter") #type: ignore
 @param (T=LENGTH, TooltipShort="Flange Thickness") #type: ignore
-@param (B=LENGTH, TooltipShort="Body Box Size") #type: ignore
 @param (H=LENGTH, TooltipShort="Total Height") #type: ignore
-@param (W=LENGTH, TooltipShort="Diaphragm Cover Diameter") #type: ignore
 #endregion
 
+#deliver parameter
+
 def DiaphragmValve(s, L=250.0, D=200.0, T=22.0, B=120.0, H=280.0, W=220.0, **kw):
+#region :deliverParams
+    B = 3*D/5 #Body size
+    W = D #Handwheel Diameter
+#endregion
     # 1. Left Flange
     f1 = CYLINDER(s, R=D/2, H=T).rotateY(90).translate((-L/2, 0, 0))
     
@@ -38,7 +42,8 @@ def DiaphragmValve(s, L=250.0, D=200.0, T=22.0, B=120.0, H=280.0, W=220.0, **kw)
     
     # 4. Central Body (Main BOX)
     # Using a Box for the central junction
-    body_box = BOX(s, L=B, W=B, H=B).translate((0, 0, -B/2))
+    body_size = 2*D/3
+    body_box = BOX(s, L=B, W=B, H=B).translate((0, 0, 0))
     f1.uniteWith(body_box)
     
     # 5. Bonnet Transition (Truncated Cone)
@@ -47,14 +52,14 @@ def DiaphragmValve(s, L=250.0, D=200.0, T=22.0, B=120.0, H=280.0, W=220.0, **kw)
     bonnet_cone = CONE(s, R1=B/2 * 0.8, R2=W/4, H=cone_h).translate((0, 0, B/2))
     f1.uniteWith(bonnet_cone)
     
-    # 6. Diaphragm Cover (Large Cylinder on top)
+    # 6. Diaphragm Handle (Large Cylinder on top)
     cover_t = 30.0
     cover = CYLINDER(s, R=W/2, H=cover_t).translate((0, 0, B/2 + cone_h))
     f1.uniteWith(cover)
     
     # 7. Top Adjustment Part (Small Cone)
     top_h = 40.0
-    top_cone = CONE(s, R1=W/6, R2=W/10, H=top_h).translate((0, 0, B/2 + cone_h + cover_t))
+    top_cone = CONE(s, R1=W/8, R2=W/10, H=top_h).translate((0, 0, B/2 + cone_h + cover_t))
     f1.uniteWith(top_cone)
 
     # Ports
