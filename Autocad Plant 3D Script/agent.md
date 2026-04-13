@@ -7,7 +7,7 @@ Tài liệu này được tổng hợp từ **Lib.py** và tài liệu **PD4214-
 ## 1. Nguyên tắc Dựng hình Cơ bản
 - **Bản chất**: Script là generator dùng để tạo khối hình học solid nằm trong một AutoCAD Block.
 - **Điểm kết nối (Ports)**: Là yếu tố quan trọng nhất để linh kiện tự động bắt dính vào đường ống. Mỗi Port cần có: **Vị trí (Position)** và **Vector hướng (Direction)**.
-- **Đơn vị**: Luôn kiểm tra `LengthUnit` ("mm" hoặc "in") trong `@activate`.
+- **Đơn vị**: Luôn kiểm tra `LengthUnit` ("mm" ) trong `@activate`.
 - **Hiệu suất**: Phải giải phóng bộ nhớ bằng lệnh `.erase()` ngay sau khi thực hiện các phép toán Boolean (`uniteWith`, `subtractFrom`, `intersectWith`).
 
 ---
