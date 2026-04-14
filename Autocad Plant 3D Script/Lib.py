@@ -326,7 +326,7 @@ def CPMB(s, L=54.0, B=22.0, D1=220.0, D2=114.3, ID="CPMB", **kw):
 # VÍ DỤ 3: TESTSCRIPT (Script đơn giản để test) - Trang 46
 # -------------------------------------------------------------------------
 
-@activate(Group="Support", TooltipShort="Test script", LengthUnit="in")
+@activate(Group="Support", TooltipShort="Test script", LengthUnit="mm")
 @group("MainDimensions")
 @param(D=LENGTH, TooltipShort="Cylinder Diameter")
 @param(L=LENGTH, TooltipShort="Length of the Cylinder")
