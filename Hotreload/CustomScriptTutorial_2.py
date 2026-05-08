@@ -20,3 +20,6 @@ def run(s, A=100., **kw):
     sub.erase()
 
     return main
+
+
+# Tools này không cần thiết, chỉ mang tính ví dụ
