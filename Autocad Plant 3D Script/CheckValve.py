@@ -20,56 +20,86 @@ from varmain.custom import *  #type: ignore
 @param (B=LENGTH, TooltipShort="Side Cover Distance") #type: ignore
 #endregion
 
-def CheckValve(s, L=250.0, D=200.0, T=22.0, D1=220.0, D2=150.0, B=120.0, **kw):
+def CheckValve(s, L=200.0, D=200.0, T=22.0, H=130, **kw):
+# Trong script hiện tại, chưa thể sử dụng parameter H để điều chỉnh chiều cao tổng thể của van, vì phần thân chính của van được thiết kế với kích thước cố định. 
+# Lý do là nếu sử dụng H để điều chỉnh chiều cao tổng thể, giá trị extrude của part1 không hiển thị đúng như mong muốn. ví dụ là dù cho có nhập H là 0 hay 100 thì giá trị được dùng để set chiều cao extrude vẫn hiển thị là 1 hằng số nào đó??????????????????
+# Tuy nhiên, tôi sẽ giữ tham số H trong hàm run . nếu tìm ra cách khắc phục vấn đề này tôi sẽ cập nhật lại code sau. 
+
+#region :deliverParams for check valve
+    B = 3*D/5 #Body size
+
+#endregion
     # 1. Left Flange
-    f1 = CYLINDER(s, R=D/2, H=T).rotateY(90).translate((-L/2, 0, 0))
+    f1 = CYLINDER(s, R=D/2, H=T).rotateY(90).translate((-L/2, 0, 0)) #type: ignore
     
     # 2. Right Flange
-    f2 = CYLINDER(s, R=D/2, H=T).rotateY(90).translate((L/2-T, 0, 0))
+    f2 = CYLINDER(s, R=D/2, H=T).rotateY(90).translate((L/2-T, 0, 0)) #type: ignore
     
-    # 3. Necks (Cylinders connecting flanges to body)
-    neck_len = (L/2 - T) - (D1/4) # Approximate neck length
-    neck1 = CYLINDER(s, R=D2/2, H=neck_len).rotateY(90).translate((-L/2+T, 0, 0))
-    neck2 = CYLINDER(s, R=D2/2, H=neck_len).rotateY(90).translate((L/2-T-neck_len, 0, 0))
-    f1.uniteWith(neck1)
-    f1.uniteWith(neck2)
+    # 3. Nozzles (Horizontal cylinders connecting flanges to body)
+    noz_d = D * 0.5
+    noz_len = (L/2 - T) - (B/2)
+    noz1 = CYLINDER(s, R=noz_d/2, H=noz_len).rotateY(90).translate((-L/2+T, 0, 0)) #type: ignore
+    noz2 = CYLINDER(s, R=noz_d/2, H=noz_len).rotateY(90).translate((B/2, 0, 0)) #type: ignore
+    f1.uniteWith(noz1)
+    f1.uniteWith(noz2)
     f1.uniteWith(f2)
     
-    # 4. Center Body (The bulbous part)
-    # Using a Sphere for the central part. In Plant 3D, SPHERE(s, R)
-    center_body = SPHERE(s, R=D1/2) 
-    f1.uniteWith(center_body)
+    # 4. Central Body 
+    # Using a Box for the central junction
+    # body_size = 2*D/3
+    # body_box = BOX(s, L=B, W=B, H=B).translate((0, 0, 0))
+    RX = L-2*T - 2*noz_len
+    RY = 2*B/3
+    A1 = 360
+    A2 = 0
+    A3 = 0
+    A4 = 180
+    body_main = ELLIPSOIDSEGMENT(s, RX=RX, RY=RY, A1=A1, A2=A2, A3=A3, A4=A4) #type: ignore
+    f1.uniteWith(body_main)
     
-    # 5. Side Cover Extension (The part on the side)
-    cover_d = D2 * 0.7
-    cover_h = B - (D1/2) # Distance from center
-    # Position it horizontally towards the side (Y axis) or Z axis. 
-    # Let's use Y for "side" view in CAD.
-    side_neck = CYLINDER(s, R=cover_d/2, H=cover_h).rotateX(-90).translate((0, D1/2, 0))
-    f1.uniteWith(side_neck)
+    # 5. Top part 1 (connect to body)
+
+    part1 = CYLINDER(s, R = 0.8*D*0.5 , H = D/2).translate((0, 0, 0)) #type: ignore
+    f1.uniteWith(part1)
+    part1.erase()
+
+    # 6. Top part 2 (top flange)
+    part2 = CYLINDER(s, R=0.5*D*0.9, H =25).translate((0, 0,  D/2)) #type: ignore
+    f1.uniteWith(part2)
     
-    # 6. Side Cover Plate (The disc at the end of the side extension)
-    plate_d = cover_d * 1.2
-    plate_t = 15.0
-    side_plate = CYLINDER(s, R=plate_d/2, H=plate_t).rotateX(-90).translate((0, B, 0))
-    f1.uniteWith(side_plate)
-    
-    # 7. Side Hex Nut (The small bolt on the side)
-    hex_s = 25.0
-    # On the same cover face
-    side_hex = CYLINDER(s, R=hex_s/2, H=15.0).rotateX(-90).translate((0, B+plate_t, 0))
-    f1.uniteWith(side_hex)
-    
-    # 8. Hinge Pin Protrusion (The small bit on the body)
-    hinge_s = 30.0
-    hinge = CYLINDER(s, R=hinge_s/2, H=10.0).rotateX(-90).translate((20, D1/2-5, 0))
-    f1.uniteWith(hinge)
+    # 7. Top hexagon
+    hex_L = 40
+    hex_W = 8
+    hex_H = 23.1
+    hex1 = BOX(s, L=hex_L, W=hex_W, H=hex_H).translate((0, 0, D/2+25))              #type: ignore
+    hex2 = BOX(s, L=hex_L, W=hex_W, H=hex_H).rotateZ(60).translate((0, 0, D/2+25))  #type: ignore
+    hex3 = BOX(s, L=hex_L, W=hex_W, H=hex_H).rotateZ(120).translate((0, 0, D/2+25)) #type: ignore
+
+    hex1.uniteWith(hex2)
+    hex2.erase()
+   
+    hex1.uniteWith(hex3)
+    hex3.erase()
+
+    f1.uniteWith(hex1)
+
+    # 8. Valve shaft 
+    shaft_d = 12
+    shaft_h = 20 + RY/2
+    # shaft_h = 200
+
+    shaft = CYLINDER(s, R=shaft_d/2, H=shaft_h).rotateX(90).translate((0.3*D, shaft_h, RY)) #type: ignore
+    # shaft = CYLINDER(s, R=shaft_d/2, H=shaft_h).translate((0, 0, 0)) #type: ignore
+
+    f1.uniteWith(shaft)
+    shaft.erase()
 
     # Ports
     s.setPoint((-L/2, 0, 0), (-1, 0, 0)) # Port 1
     s.setPoint((L/2, 0, 0), (1, 0, 0))   # Port 2
     
     return f1
+
 
 check_valve = CheckValve
 OUT = check_valve
