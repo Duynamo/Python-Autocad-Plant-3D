@@ -1,4 +1,4 @@
-def run(s, L=200.0, D=200.0, T=22.0, H=130, **kw):
+def run(s, L=250.0, D=200.0, T=22.0, H=130, **kw):
 # Trong script hiện tại, chưa thể sử dụng parameter H để điều chỉnh chiều cao tổng thể của van, vì phần thân chính của van được thiết kế với kích thước cố định. 
 # Lý do là nếu sử dụng H để điều chỉnh chiều cao tổng thể, giá trị extrude của part1 không hiển thị đúng như mong muốn. ví dụ là dù cho có nhập H là 0 hay 100 thì giá trị được dùng để set chiều cao extrude vẫn hiển thị là 1 hằng số nào đó??????????????????
 # Tuy nhiên, tôi sẽ giữ tham số H trong hàm run . nếu tìm ra cách khắc phục vấn đề này tôi sẽ cập nhật lại code sau. 
@@ -37,21 +37,21 @@ def run(s, L=200.0, D=200.0, T=22.0, H=130, **kw):
     
     # 5. Top part 1 (connect to body)
 
-    part1 = CYLINDER(s, R = 0.8*D*0.5 , H = D/2).translate((0, 0, 0)) #type: ignore
+    part1 = CYLINDER(s, R = 0.8*D*0.5 , H = H-33).translate((0, 0, 0)) #type: ignore
     f1.uniteWith(part1)
     part1.erase()
 
     # 6. Top part 2 (top flange)
-    part2 = CYLINDER(s, R=0.5*D*0.9, H =25).translate((0, 0,  D/2)) #type: ignore
+    part2 = CYLINDER(s, R=0.5*D*0.9, H =25).translate((0, 0,  H-33)) #type: ignore
     f1.uniteWith(part2)
     
     # 7. Top hexagon
     hex_L = 40
     hex_W = 8
     hex_H = 23.1
-    hex1 = BOX(s, L=hex_L, W=hex_W, H=hex_H).translate((0, 0, D/2+25))              #type: ignore
-    hex2 = BOX(s, L=hex_L, W=hex_W, H=hex_H).rotateZ(60).translate((0, 0, D/2+25))  #type: ignore
-    hex3 = BOX(s, L=hex_L, W=hex_W, H=hex_H).rotateZ(120).translate((0, 0, D/2+25)) #type: ignore
+    hex1 = BOX(s, L=hex_L, W=hex_W, H=hex_H).translate((0, 0, H-33+25))              #type: ignore
+    hex2 = BOX(s, L=hex_L, W=hex_W, H=hex_H).rotateZ(60).translate((0, 0, H-33+25))  #type: ignore
+    hex3 = BOX(s, L=hex_L, W=hex_W, H=hex_H).rotateZ(120).translate((0, 0, H-33+25)) #type: ignore
 
     hex1.uniteWith(hex2)
     hex2.erase()

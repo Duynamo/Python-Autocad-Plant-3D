@@ -19,7 +19,7 @@ print("hotreload.py: imported")
 @param(D=LENGTH, TooltipShort="Flange Diameter")
 @param(T=LENGTH, TooltipShort="Flange Thickness")
 @param(H=LENGTH, TooltipShort="Total Height")
-def hotreload(s, L=250.0, D=200.0, T=22.0, H=280.0, **kw):
+def hotreload(s, L=250.0, D=200.0, T=22.0, H=130.0, **kw):
     try:
         with open(_IMPL_PATH, encoding="utf-8") as f:
             source = f.read()
