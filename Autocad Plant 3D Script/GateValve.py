@@ -5,100 +5,172 @@ from varmain.custom import *  #type: ignore
 #endregion
 
 #region __metaData
-@activate (Group="Valve",
-          TooltipShort="Gate Valve JIS10K",
-          TooltipLong="Gate Valve with Handwheel",
-          FirstPortEndtypes="FL",
-          LengthUnit="mm",
-          Ports="2")
-@group ("MainDimensions") #type: ignore
-@param (L=LENGTH, TooltipShort="Overall Length (Face to Face)") #type: ignore
-@param (D=LENGTH, TooltipShort="Flange Outer Diameter") #type: ignore
-@param (T=LENGTH, TooltipShort="Flange Thickness") #type: ignore
-@param (D1=LENGTH, TooltipShort="Body Outer Diameter") #type: ignore
-@param (H=LENGTH, TooltipShort="Height to Center of Handwheel") #type: ignore
-@param (W=LENGTH, TooltipShort="Handwheel Diameter") #type: ignore
-@param (B=LENGTH, TooltipShort="Body Width (Gate Housing)") #type: ignore
-@param (h1=LENGTH, TooltipShort="Height of Lower Extension") #type: ignore
+@activate (Group="Valve", TooltipShort="Gate Valve JIS7.5K",TooltipLong="Gate Valve with Handwheel",FirstPortEndtypes="FL",LengthUnit="mm",Ports="2") #type: ignore
+@group("MainDimensions") #type: ignore
+@param(L=LENGTH, TooltipShort="Length (Face to Face)") #type: ignore
+@param(D=LENGTH, TooltipShort="Flange Diameter") #type: ignore
+@param(T=LENGTH, TooltipShort="Flange Thickness") #type: ignore
+@param(H=LENGTH, TooltipShort="Total Height") #type: ignore
+@param(D1=LENGTH, TooltipShort="Handle Diameter") #type: ignore
+@param(No=INT, TooltipShort="Number of holes") #type: ignore
+@param(Dh=LENGTH, TooltipShort="Bolt hole Diameter") #type: ignore
+@param(PCD=LENGTH, TooltipShort="PCDA") #type: ignore
+@param(F=LENGTH, TooltipShort="Groove on Flange Diameter Thickness") #type: ignore
+@param(G=LENGTH, TooltipShort="Groove on Flange Diameter") #type: ignore
+@param(OF=LENGTH, TooltipShort="Offset from top of shaft to top of handwheel") #type: ignore
+def GateValve(s, L=300.0, D=342.0, T=27.0, H=703.0, D1=355.0, No=8, Dh=19.0, PCD=299.0, F=3.0, G=256.0,OF=80, **kw):
 #endregion
 
-def GateValve(s, L=250.0, D=150.0, T=20.0, D1=100.0, H=350.0, W=200.0, B=80.0, h1=40.0, **kw):
+# sample parameters for Gate Valve DN 200 Flange 7.5K:
+# L=300.0, D=342.0, T=27.0, H=703.0, D1=355.0, No=8, Dh=19.0, PCD=299.0, F=3.0, G=256.0
+# sample parameters for Gate Valve DN 150 Flange 7.5K:
+# L=280.0, D=290.0, T=26.0, H=558.0, D1=300.0, No=6, Dh=19.0, PCD=247.0, F=3.0, G=204.0
+#
+# Lưu ý khi move đối tượng. Mặc định khi được tạo, khố sẽ được tạo ra theo dạng đối xứng quanh gốc tọa độ (0, 0, 0). Khi move, đối tượng sẽ được dịch chuyển theo vector từ gốc đến điểm mới. Nếu muốn đối tượng nằm ở vị trí chính xác, cần tính toán vector dịch chuyển dựa trên kích thước và vị trí mong muốn của đối tượng.
+#region :deliverParams for check valve
+    B = 3*D/5 #Body size
+
+#endregion
     # 1. Left Flange
-    f1 = CYLINDER(s, R=D/2, H=T).rotateY(90).translate((-L/2, 0, 0))
+    f1_G = CYLINDER(s, R=G/2, H=F).rotateY(90).translate((-L/2 , 0, 0)) #type: ignore
+    f1 = CYLINDER(s, R=D/2, H=T).rotateY(90).translate((-L/2 + F, 0, 0)) #type: ignore
+    f1.uniteWith(f1_G)
+    f1_G.erase()
     
     # 2. Right Flange
-    f2 = CYLINDER(s, R=D/2, H=T).rotateY(90).translate((L/2-T, 0, 0))
+    f2_G = CYLINDER(s, R=G/2, H=F).rotateY(90).translate((L/2- F , 0, 0)) #type: ignore
+    f2 = CYLINDER(s, R=D/2, H=T).rotateY(90).translate((L/2 -T- F , 0, 0)) #type: ignore
+    f2.uniteWith(f2_G)
+    f2_G.erase()
     
-    # 3. Main Center Body (The vertical cylinder highlighted in Cyan)
-    h_center = D1 * 1.1
-    center_body = CYLINDER(s, R=D1/2, H=h_center).translate((0, 0, -h_center/2))
-    f1.uniteWith(center_body)
+    # Gộp luôn cụm bích phải vào Root f1
     f1.uniteWith(f2)
+    f2.erase()
+
+    # 3. Body 1 (Horizontal cylinders connecting left and right flanges)
+    body1_D = D * 0.6
+    body1_L = (L - 2*T - 2*F) 
+    body1 = CYLINDER(s, R=body1_D/2, H=body1_L).rotateY(90).translate((-body1_L/2, 0, 0)) #type: ignore
     
-    # 3a. Horizontal Nozzles (Left and Right pipe segments)
-    noz_d = D1 * 0.85
-    noz_len = (L/2 - T - D1/2)
-    noz1 = CYLINDER(s, R=noz_d/2, H=noz_len).rotateY(90).translate((-L/2+T, 0, 0))
-    noz2 = CYLINDER(s, R=noz_d/2, H=noz_len).rotateY(90).translate((D1/2, 0, 0))
-    f1.uniteWith(noz1)
-    f1.uniteWith(noz2)
+    f1.uniteWith(body1)
+    body1.erase()
     
-    # 5. Bonnet (Cylindrical part above body)
-    bonnet_h = H * 0.25
-    bonnet = CYLINDER(s, R=D1/2, H=bonnet_h).translate((0, 0, h_center/2))
-    f1.uniteWith(bonnet)
+    # 4. Body 2 3 4 (Phần body chứa đĩa van)
+    # Chiều cao phân bổ cho phần này là H / 2  
+    body2_D = D * 0.7
+    body2_L = 0.4 * L
+    body2 = CYLINDER(s, R=body2_D/2, H=body2_L).rotateY(90).translate((-body2_L/2, 0, 0))#type: ignore
+
+    body4_H = 0.4 * L
+    body4_L = 0.7 * D
+    body4_W = H/2 - body2_D / 2  #type: ignore
+    body4 = BOX(s, L=body4_L, W=body4_W, H=body4_H).rotateY(0).translate((0, 0, body4_W / 2 )) #type: ignore
+    body4.uniteWith(body2)
+    body2.erase()
+
+    body3_D = D * 0.7
+    body3_L = 0.4 * L
+    body3 = CYLINDER(s, R=body3_D/2, H=body3_L).rotateY(90).translate((-body2_L/2, 0, H/2 - body3_D/2))#type: ignore
+
+    body4.uniteWith(body3)
+    body3.erase()
+    
+    f1.uniteWith(body4)
+    body4.erase()
+
+
+    # 5. Mặt bích thân valve
+    bodyFlange_L = 0.8 * L
+
+    bodyFlange1_D = 0.6 * L
+    bodyFlange1_H = 0.8 * 2 * T
+    bodyFlange1 = CYLINDER(s, R=bodyFlange1_D/2, H=bodyFlange1_H).translate((0, bodyFlange_L/3, 0.3*H)) #type: ignore
+    f1.uniteWith(bodyFlange1)
+    bodyFlange1.erase()
+
+    bodyFlange2_D = 0.6 * L
+    bodyFlange2_H = 0.8 * 2 * T
+    bodyFlange2 = CYLINDER(s, R=bodyFlange2_D/2, H=bodyFlange2_H).translate((0, -bodyFlange_L/3, 0.3*H)) #type: ignore
+    f1.uniteWith(bodyFlange2)
+    bodyFlange2.erase()
+
+    bodyFlange3_L = bodyFlange_L - bodyFlange1_D / 2
+    bodyFlange3_H = 0.6 * L 
+    bodyFlange3_W = 0.8 * 2 * T
+    bodyFlange3 = BOX(s, L=bodyFlange3_L, W=bodyFlange3_W, H=bodyFlange3_H).translate((0, 0, 0.3*H + bodyFlange3_W/2 )) #type: ignore
+    f1.uniteWith(bodyFlange3)
+    bodyFlange3.erase()
+
+
+    # 6. Trục tay vặn
+    shaft_d = 32
+    shaft_h = H-H/2 # gỉa định 25 là độ dày tay vặn, 10 là độ dày bulong lục giác đỉnh
+    shaft = CYLINDER(s, R=shaft_d/2, H=shaft_h).translate((0, 0, H/2)) #type: ignore
+    f1.uniteWith(shaft)
+    shaft.erase()
+
+    # 7. Tay vặn
+    offset = OF # Khoảng cách từ đỉnh trục đến  tay vặn
+    handwheel_d = D1
+    handwheel_h = 25
+    handwheel = CYLINDER(s, R=handwheel_d/2, H=handwheel_h).translate((0, 0, H/2+shaft_h -offset)) #type: ignore
+    f1.uniteWith(handwheel)
+    # handwheel.erase()
+    
+    # 8. Top hexagon
+    hex_L = 40
+    hex_W = 10
+    hex_H = 23.1
+    hex1 = BOX(s, L=hex_L, W=hex_W, H=hex_H).translate((0, 0, H/2 +shaft_h+25 + hex_W / 2 - offset))              #type: ignore
+    hex2 = BOX(s, L=hex_L, W=hex_W, H=hex_H).rotateZ(60).translate((0, 0, H/2 +shaft_h+25 + hex_W / 2 - offset))  #type: ignore
+    hex3 = BOX(s, L=hex_L, W=hex_W, H=hex_H).rotateZ(120).translate((0, 0, H/2 +shaft_h+25 + hex_W / 2 - offset)) #type: ignore
+
+    hex1.uniteWith(hex2)
+    hex2.erase()
+   
+    hex1.uniteWith(hex3)
+    hex3.erase()
+
+    f1.uniteWith(hex1)
+    hex1.erase()
+
+    # 9. Gân gia cường tay vặn
+    rib1_L = 0.15 * L
+    rib1_W = 20
+    rib1_H = 0.45 * L
+    rib1 = BOX(s, L=rib1_L, W=rib1_W, H=rib1_H).translate((0, 0, H/2 +rib1_W/2)) #type: ignore
+    f1.uniteWith(rib1)
+    rib1.erase() 
+
+    rib2_L = 0.2 * L
+    rib2_W = 20
+    rib2_H = 0.2 * L
+    rib2 = BOX(s, L=rib2_L, W=rib2_W, H=rib2_H).translate((0, 0, 3*H/4 )) #type: ignore
+    f1.uniteWith(rib2)
+    rib2.erase() 
+
+    rib3_L = 20
+    rib3_W = H/2
+    rib3_H = 20
+    rib3 = BOX(s, L=rib3_L, W=rib3_W, H=rib3_H).translate((-35, 0, H/2 +rib1_W/2 )) #type: ignore
+    f1.uniteWith(rib3)
+    rib3.erase()
+
+    rib4_L = 20
+    rib4_W = H/2
+    rib4_H = 20
+    rib4 = BOX(s, L=rib4_L, W=rib4_W, H=rib4_H).translate((35, 0, H/2 +rib1_W/2 )) #type: ignore
+    f1.uniteWith(rib4)
+    rib4.erase()
+
+    #10. Lỗ bulong mặt bích
 
 
     
-    # 6. Body Flange (Middle disc)
-    mf_t = 15.0
-    mf_d = B * 1.3
-    m_flange = CYLINDER(s, R=mf_d/2, H=mf_t).translate((0, 0, bonnet_h))
-    f1.uniteWith(m_flange)
-    
-    # 7. Cage/Yoke Legs (The two legs above the body flange)
-    cage_h = H * 0.4
-    leg_w = B * 0.15
-    leg1 = BOX(s, L=leg_w, W=leg_w, H=cage_h).translate((B/3, 0, bonnet_h + mf_t + cage_h/2))
-    leg2 = BOX(s, L=leg_w, W=leg_w, H=cage_h).translate((-B/3, 0, bonnet_h + mf_t + cage_h/2))
-    f1.uniteWith(leg1)
-    f1.uniteWith(leg2)
-    
-    # 8. Yoke Cap (on top of legs)
-    cap_h = 20.0
-    cap = BOX(s, L=B*0.8, W=leg_w*2, H=cap_h).translate((0, 0, bonnet_h + mf_t + cage_h + cap_h/2))
-    f1.uniteWith(cap)
-    
-    # 9. Stem (Thin rod in center)
-    stem_d = B * 0.1
-    stem = CYLINDER(s, R=stem_d/2, H=H - bonnet_h).translate((0, 0, bonnet_h))
-    f1.uniteWith(stem)
-    
-    # 10. Handwheel Rim
-    rim_t = 12.0
-    rim = CYLINDER(s, R=W/2, H=rim_t).translate((0, 0, H))
-    # Or use TORUS for better look:
-    # rim = TORUS(s, R1=(W-rim_t)/2, R2=rim_t/2).translate((0,0, H+rim_t/2))
-    f1.uniteWith(rim)
-    
-    # 11. Handwheel Spokes (5 spokes)
-    spoke_w = rim_t * 0.8
-    for i in range(5):
-        angle = 72 * i
-        spoke = BOX(s, L=W/2, W=spoke_w, H=spoke_w).translate((W/4, 0, H + rim_t/2)).rotateZ(angle)
-        f1.uniteWith(spoke)
-        
-    # 12. Top Hex Nut
-    nut_s = rim_t * 1.5
-    nut = CYLINDER(s, R=nut_s/2, H=rim_t).translate((0, 0, H + rim_t/2)) # Hex would be better but cylinder is safe
-    f1.uniteWith(nut)
-
-    # Connection Points
-    s.setPoint((-L/2, 0, 0), (-1, 0, 0)) # CP1
-    s.setPoint((L/2, 0, 0), (1, 0, 0))   # CP2
+    # Ports
+    s.setPoint((-L/2, 0, 0), (-1, 0, 0)) # Port 1
+    s.setPoint((L/2, 0, 0), (1, 0, 0))   # Port 2
     
     return f1
 
-# Standard assignment for Plant 3D
-valve = GateValve
-OUT = valve
+OUT = GateValve
