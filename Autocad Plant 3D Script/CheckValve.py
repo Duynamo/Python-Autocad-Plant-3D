@@ -46,8 +46,6 @@ def CheckValve(s, L=250.0, D=200.0, T=22.0, H=130, **kw):
     
     # 4. Central Body 
     # Using a Box for the central junction
-    # body_size = 2*D/3
-    # body_box = BOX(s, L=B, W=B, H=B).translate((0, 0, 0))
     RX = L-2*T - 2*noz_len
     RY = 2*B/3
     A1 = 360
