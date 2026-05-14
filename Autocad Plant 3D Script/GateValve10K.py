@@ -1,17 +1,23 @@
-def run(s, L=300.0, D=342.0, T=27.0, H=703.0, D1=355.0, No=8, Dh=19.0, PCD=299.0, F=3.0, G=256.0,OF=80, **kw):
+#region ___import Python Package
+from aqa.math import *  #type: ignore
+from varmain.primitiv import *  #type: ignore
+from varmain.custom import *  #type: ignore
+#endregion
 
-# sample parameters for Gate Valve DN 200 Flange 7.5K:
-# L=300.0, D=342.0, T=27.0, H=703.0, D1=355.0, No=8, Dh=19.0, PCD=299.0, F=3.0, G=256.0
-# sample parameters for Gate Valve DN 150 Flange 7.5K:
-# L=280.0, D=290.0, T=26.0, H=558.0, D1=300.0, No=6, Dh=19.0, PCD=247.0, F=3.0, G=204.0
+@activate(Group="Valve", TooltipShort="Hot-Reload Valve", TooltipLong="Hot-Reload for complex valve script", LengthUnit="mm", Ports="2") #type: ignore
+@group("MainDimensions") #type: ignore
+@param(L=LENGTH, TooltipShort="Length (Face to Face)") #type: ignore
+@param(D=LENGTH, TooltipShort="Flange Diameter") #type: ignore
+@param(T=LENGTH, TooltipShort="Flange Thickness") #type: ignore
+@param(H=LENGTH, TooltipShort="Total Height") #type: ignore
+@param(D1=LENGTH, TooltipShort="Handle Diameter") #type: ignore
+@param(No=INT, TooltipShort="Number of holes") #type: ignore
+@param(Dh=LENGTH, TooltipShort="Bolt hole Diameter") #type: ignore
+@param(PCD=LENGTH, TooltipShort="PCDA") #type: ignore
+@param(OF=LENGTH, TooltipShort="Offset from top of shaft to top of handwheel") #type: ignore
 
-# sample parameters for Gate Valve DN 200 Flange 10K:
-# L=L=290.0, D=330.0, T=26.0, H=558.0, D1=300.0, No=12, Dh=23.0, PCD=290.0,  OF=80
-
-#
-# Lưu ý khi move đối tượng. Mặc định khi được tạo, khố sẽ được tạo ra theo dạng đối xứng quanh gốc tọa độ (0, 0, 0). Khi move, đối tượng sẽ được dịch chuyển theo vector từ gốc đến điểm mới. Nếu muốn đối tượng nằm ở vị trí chính xác, cần tính toán vector dịch chuyển dựa trên kích thước và vị trí mong muốn của đối tượng.
-
-#region :deliverParams for check valve
+def GateValve10K(s, L=290.0, D=330.0, T=26.0, H=558.0, D1=300.0, No=12, Dh=23.0, PCD=290.0,  OF=80, **kw): #type: ignore
+    #region :deliverParams for check valve
 #endregion
     # 1. Left Flange
     f1 = CYLINDER(s, R=D/2, H=T).rotateY(90).translate((-L/2, 0, 0)) #type: ignore
@@ -142,3 +148,5 @@ def run(s, L=300.0, D=342.0, T=27.0, H=703.0, D1=355.0, No=8, Dh=19.0, PCD=299.0
     s.setPoint((L/2, 0, 0), (1, 0, 0))   # Port 2
     
     return f1
+
+OUT = GateValve10K

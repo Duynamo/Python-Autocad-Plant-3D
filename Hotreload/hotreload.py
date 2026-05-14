@@ -23,10 +23,8 @@ print("hotreload.py: imported") #type: ignore
 @param(No=INT, TooltipShort="Number of holes") #type: ignore
 @param(Dh=LENGTH, TooltipShort="Bolt hole Diameter") #type: ignore
 @param(PCD=LENGTH, TooltipShort="PCDA") #type: ignore
-@param(F=LENGTH, TooltipShort="Groove on Flange Diameter Thickness") #type: ignore
-@param(G=LENGTH, TooltipShort="Groove on Flange Diameter") #type: ignore
-
-def hotreload(s, L=280.0, D=290.0, T=26.0, H=558.0, D1=300.0, No=6, Dh=19.0, PCD=247.0, F=3.0, G=204.0, OF=80, **kw): #type: ignore
+@param(OF=LENGTH, TooltipShort="Offset from top of shaft to top of handwheel") #type: ignore
+def hotreload(s, L=290.0, D=330.0, T=26.0, H=558.0, D1=300.0, No=12, Dh=23.0, PCD=290.0,  OF=80, **kw): #type: ignore
     try:
         with open(_IMPL_PATH, encoding="utf-8") as f:
             source = f.read()
@@ -34,7 +32,7 @@ def hotreload(s, L=280.0, D=290.0, T=26.0, H=558.0, D1=300.0, No=6, Dh=19.0, PCD
         ns["primitives"] = _primitives
         exec(compile(source, _IMPL_PATH, "exec"), ns)
         # Truyền tất cả các tham số đã định nghĩa vào hàm run
-        return ns["run"](s, L=L, D=D, T=T, H=H, D1=D1, No=No, Dh=Dh, PCD=PCD, F=F, G=G,OF=OF, **kw)
+        return ns["run"](s, L=L, D=D, T=T, H=H, D1=D1, No=No, Dh=Dh, PCD=PCD, OF=OF, **kw)
     except Exception as e:
         import traceback
         traceback.print_exc()
