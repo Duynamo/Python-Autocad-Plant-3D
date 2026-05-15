@@ -1,103 +1,85 @@
-def run(s, L=300.0, D=342.0, T=27.0, H=703.0, D1=355.0, No=8, Dh=19.0, PCD=299.0, F=3.0, G=256.0,OF=80, **kw):
+def run(s, L=500.0, D=342.0, T=27.0, H=260.0, D1=340.0, No=8, Dh=19.0,H1 = 210.0, PCD=299.0, F=3.0, G=256.0, **kw): #type: ignore
 
-# sample parameters for Gate Valve DN 200 Flange 7.5K:
-# L=300.0, D=342.0, T=27.0, H=703.0, D1=355.0, No=8, Dh=19.0, PCD=299.0, F=3.0, G=256.0
-# sample parameters for Gate Valve DN 150 Flange 7.5K:
-# L=280.0, D=290.0, T=26.0, H=558.0, D1=300.0, No=6, Dh=19.0, PCD=247.0, F=3.0, G=204.0
+# sample parameters for Check Valve DN 200 Flange 7.5K:
 
-# sample parameters for Gate Valve DN 200 Flange 10K:
-# L=L=290.0, D=330.0, T=26.0, H=558.0, D1=300.0, No=12, Dh=23.0, PCD=290.0,  OF=80
-
-#
 # Lưu ý khi move đối tượng. Mặc định khi được tạo, khố sẽ được tạo ra theo dạng đối xứng quanh gốc tọa độ (0, 0, 0). Khi move, đối tượng sẽ được dịch chuyển theo vector từ gốc đến điểm mới. Nếu muốn đối tượng nằm ở vị trí chính xác, cần tính toán vector dịch chuyển dựa trên kích thước và vị trí mong muốn của đối tượng.
 
 #region :deliverParams for check valve
 #endregion
     # 1. Left Flange
-    f1 = CYLINDER(s, R=D/2, H=T).rotateY(90).translate((-L/2, 0, 0)) #type: ignore
+    f1_G = CYLINDER(s, R=G/2, H=F).rotateY(90).translate((-L/2 , 0, 0)) #type: ignore
+    f1 = CYLINDER(s, R=D/2, H=T).rotateY(90).translate((-L/2 + F, 0, 0)) #type: ignore
+    f1.uniteWith(f1_G)
+    f1_G.erase()
     
     # 2. Right Flange
-    f2 = CYLINDER(s, R=D/2, H=T).rotateY(90).translate((L/2 -T , 0, 0)) #type: ignore
+    f2_G = CYLINDER(s, R=G/2, H=F).rotateY(90).translate((L/2- F , 0, 0)) #type: ignore
+    f2 = CYLINDER(s, R=D/2, H=T).rotateY(90).translate((L/2 -T- F , 0, 0)) #type: ignore
+    f2.uniteWith(f2_G)
+    f2_G.erase()
+    
+    # Gộp luôn cụm bích phải vào Root f1
     f1.uniteWith(f2)
     f2.erase()
 
     # 3. Body 1 (Horizontal cylinders connecting left and right flanges)
     body1_D = D * 0.6
-    body1_L = (L - 2*T) 
+    body1_L = (L - 2*T - 2*F) 
     body1 = CYLINDER(s, R=body1_D/2, H=body1_L).rotateY(90).translate((-body1_L/2, 0, 0)) #type: ignore
+
     f1.uniteWith(body1)
     body1.erase()
-    
-    # 4. Body 2 3 4 (Phần body chứa đĩa van)
+
+    # 5. Body main
     # Chiều cao phân bổ cho phần này là H / 2  
-    body2_D = D * 0.7
-    body2_L = 0.4 * L
-    body2 = CYLINDER(s, R=body2_D/2, H=body2_L).rotateY(90).translate((-body2_L/2, 0, 0))#type: ignore
+    RX = 0.53 * (L - 2*T - 2*F)
+    RY = 0.9 * body1_D 
+    A1 = 360
+    A2 = 0
+    A3 = 0
+    A4 = 180
+    body_main = ELLIPSOIDSEGMENT(s, RX=RX, RY=RY, A1=A1, A2=A2, A3=A3, A4=A4) #type: ignore
+    f1.uniteWith(body_main)
+    # body_main.erase()
 
-    body4_H = 0.4 * L
-    body4_L = 0.7 * D
-    body4_W = H/2 - body2_D / 2  #type: ignore
-    body4 = BOX(s, L=body4_L, W=body4_W, H=body4_H).rotateY(0).translate((0, 0, body4_W / 2 )) #type: ignore
-    body4.uniteWith(body2)
-    body2.erase()
+    # 6. Horizontal Nozzel 
+    nozzel_D = 0.8 * D
+    nozzel_L =  H-40
+    nozzel = CYLINDER(s, R=nozzel_D/2, H=nozzel_L).translate((0, 0, 0)) #type: ignore
+    f1.uniteWith(nozzel)
+    nozzel.erase()
 
-    body3_D = D * 0.7
-    body3_L = 0.4 * L
-    body3 = CYLINDER(s, R=body3_D/2, H=body3_L).rotateY(90).translate((-body2_L/2, 0, H/2 - body3_D/2))#type: ignore
+    # 7. Body Flange
+    bodyFlange_L = 20
+    bodyFlange_D = 0.98 * D1
+    bodyFlange = CYLINDER(s, R=bodyFlange_D/2, H=bodyFlange_L).translate((0, 0, H-40)) #type: ignore
+    f1.uniteWith(bodyFlange)
+    bodyFlange.erase()
 
-    body4.uniteWith(body3)
-    body3.erase()
-    
-    f1.uniteWith(body4)
-    body4.erase()
+    # 8. Top Flange
+    topFlange_L = 20
+    topFlange_D = D1
+    topFlange = CYLINDER(s, R=topFlange_D/2, H=topFlange_L).translate((0, 0, H-20)) #type: ignore
+    f1.uniteWith(topFlange)
+    topFlange.erase()
 
+    # 9. Hinger pin
+    hinger_D = 55
+    hinger_L = 1.4 * body1_D / 2  
+    hinger = CYLINDER(s, R=hinger_D/2, H=hinger_L).rotateX(90).translate((-0.6*0.5*nozzel_D, 0, 0.7*H)) #type: ignore
+    f1.uniteWith(hinger)
+    hinger.erase()
 
-    # 5. Mặt bích thân valve
-    bodyFlange_L = 0.8 * L
-
-    bodyFlange1_D = 0.6 * L
-    bodyFlange1_H = 0.8 * 2 * T
-    bodyFlange1 = CYLINDER(s, R=bodyFlange1_D/2, H=bodyFlange1_H).translate((0, bodyFlange_L/3, 0.3*H)) #type: ignore
-
-    bodyFlange2_D = 0.6 * L
-    bodyFlange2_H = 0.8 * 2 * T
-    bodyFlange2 = CYLINDER(s, R=bodyFlange2_D/2, H=bodyFlange2_H).translate((0, -bodyFlange_L/3, 0.3*H)) #type: ignore
-
-    bodyFlange3_L = bodyFlange_L - bodyFlange1_D / 2
-    bodyFlange3_H = 0.6 * L 
-    bodyFlange3_W = 0.8 * 2 * T
-    bodyFlange3 = BOX(s, L=bodyFlange3_L, W=bodyFlange3_W, H=bodyFlange3_H).translate((0, 0, 0.3*H + bodyFlange3_W/2 )) #type: ignore
-
-    bodyFlange3.uniteWith(bodyFlange1)
-    bodyFlange3.uniteWith(bodyFlange2)
-    bodyFlange1.erase()
-    bodyFlange2.erase()
-    f1.uniteWith(bodyFlange3)
-    bodyFlange3.erase()
-
-
-    # 6. Trục tay vặn
-    shaft_d = 32
-    shaft_h = H-H/2 # gỉa định 25 là độ dày tay vặn, 10 là độ dày bulong lục giác đỉnh
-    shaft = CYLINDER(s, R=shaft_d/2, H=shaft_h).translate((0, 0, H/2)) #type: ignore
-    f1.uniteWith(shaft)
-    shaft.erase()
-
-    # 7. Tay vặn
-    offset = OF # Khoảng cách từ đỉnh trục đến  tay vặn
-    handwheel_d = D1
-    handwheel_h = 25
-    handwheel = CYLINDER(s, R=handwheel_d/2, H=handwheel_h).translate((0, 0, H/2+shaft_h -offset)) #type: ignore
-    f1.uniteWith(handwheel)
-    handwheel.erase()
-    
-    # 8. Top hexagon
+    # 10. Hinger pin bolt
     hex_L = 40
-    hex_W = 10
+    hex_W = 40
     hex_H = 23.1
-    hex1 = BOX(s, L=hex_L, W=hex_W, H=hex_H).translate((0, 0, H/2 +shaft_h+25 + hex_W / 2 - offset))              #type: ignore
-    hex2 = BOX(s, L=hex_L, W=hex_W, H=hex_H).rotateZ(60).translate((0, 0, H/2 +shaft_h+25 + hex_W / 2 - offset))  #type: ignore
-    hex3 = BOX(s, L=hex_L, W=hex_W, H=hex_H).rotateZ(120).translate((0, 0, H/2 +shaft_h+25 + hex_W / 2 - offset)) #type: ignore
+    x_pos = -0.6*0.5*nozzel_D
+    z_pos = 0.7*H
+    
+    hex1 = BOX(s, L=hex_L, W=hex_W, H=hex_H).rotateX(90).translate((x_pos, -hinger_L, z_pos))#type: ignore
+    hex2 = BOX(s, L=hex_L, W=hex_W, H=hex_H).rotateZ(60).rotateX(90).translate((x_pos, -hinger_L, z_pos))#type: ignore
+    hex3 = BOX(s, L=hex_L, W=hex_W, H=hex_H).rotateZ(120).rotateX(90).translate((x_pos, -hinger_L, z_pos))#type: ignore
 
     hex1.uniteWith(hex2)
     hex2.erase()
@@ -107,38 +89,10 @@ def run(s, L=300.0, D=342.0, T=27.0, H=703.0, D1=355.0, No=8, Dh=19.0, PCD=299.0
 
     f1.uniteWith(hex1)
     hex1.erase()
-
-    # 9. Gân gia cường tay vặn
-    rib1_L = 0.15 * L
-    rib1_W = 20
-    rib1_H = 0.45 * L
-    rib1 = BOX(s, L=rib1_L, W=rib1_W, H=rib1_H).translate((0, 0, H/2 +rib1_W/3)) #type: ignore
-    f1.uniteWith(rib1)
-    rib1.erase() 
-
-    rib2_L = 0.2 * L
-    rib2_W = 20
-    rib2_H = 0.2 * L
-    rib2 = BOX(s, L=rib2_L, W=rib2_W, H=rib2_H).translate((0, 0, 3*H/4 )) #type: ignore
-    f1.uniteWith(rib2)
-    rib2.erase() 
-
-    rib3_L = 20
-    rib3_W = H/2
-    rib3_H = 20
-    rib3 = BOX(s, L=rib3_L, W=rib3_W, H=rib3_H).translate((-35, 0, H/2 +rib1_W/2 )) #type: ignore
-    f1.uniteWith(rib3)
-    rib3.erase()
-
-    rib4_L = 20
-    rib4_W = H/2
-    rib4_H = 20
-    rib4 = BOX(s, L=rib4_L, W=rib4_W, H=rib4_H).translate((35, 0, H/2 +rib1_W/2 )) #type: ignore
-    f1.uniteWith(rib4)
-    rib4.erase()
-
+    
     # Ports
     s.setPoint((-L/2, 0, 0), (-1, 0, 0)) # Port 1
     s.setPoint((L/2, 0, 0), (1, 0, 0))   # Port 2
     
     return f1
+

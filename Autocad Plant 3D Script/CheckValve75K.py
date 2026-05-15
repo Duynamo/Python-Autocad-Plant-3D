@@ -18,9 +18,7 @@ from varmain.custom import *  #type: ignore
 @param(PCD=LENGTH, TooltipShort="PCDA") #type: ignore
 @param(F=LENGTH, TooltipShort="Groove on Flange Diameter Thickness") #type: ignore
 @param(G=LENGTH, TooltipShort="Groove on Flange Diameter") #type: ignore
-@param(OF=LENGTH, TooltipShort="Offset from top of shaft to top of handwheel") #type: ignore
-
-def CheckValve(s, L=500.0, D=342.0, T=27.0, H=260.0, D1=340.0, No=8, Dh=19.0,H1 = 210.0, PCD=299.0, F=3.0, G=256.0, **kw): #type: ignore
+def CheckValve75K(s, L=500.0, D=342.0, T=27.0, H=260.0, D1=340.0, No=8, Dh=19.0,H1 = 210.0, PCD=299.0, F=3.0, G=256.0, **kw): #type: ignore
 
 # sample parameters for Check Valve DN 200 Flange 7.5K:
 
@@ -118,4 +116,4 @@ def CheckValve(s, L=500.0, D=342.0, T=27.0, H=260.0, D1=340.0, No=8, Dh=19.0,H1 
     
     return f1
 
-OUT = CheckValve
+OUT = CheckValve75K

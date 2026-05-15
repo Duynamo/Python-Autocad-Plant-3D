@@ -24,7 +24,6 @@ print("hotreload.py: imported") #type: ignore
 @param(PCD=LENGTH, TooltipShort="PCDA") #type: ignore
 @param(F=LENGTH, TooltipShort="Groove on Flange Diameter Thickness") #type: ignore
 @param(G=LENGTH, TooltipShort="Groove on Flange Diameter") #type: ignore
-@param(OF=LENGTH, TooltipShort="Offset from top of shaft to top of handwheel") #type: ignore
 def hotreload(s, L=500.0, D=342.0, T=27.0, H=260.0, D1=340.0, No=8, Dh=19.0,H1 = 210.0, PCD=299.0, F=3.0, G=256.0, **kw): #type: ignore
     try:
         with open(_IMPL_PATH, encoding="utf-8") as f:
