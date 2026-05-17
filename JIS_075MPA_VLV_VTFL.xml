@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ArrayOfScript xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+	<Script Name="JIS_075MPA_VLV_VTFL" LDesId="JIS_075MPA_VLV_VTFL_L" SDesId="JIS_075MPA_VLV_VTFL" ConnPortNum="2" LengthUnit="mm" >
+		<Params>
+			<Param Name="L" LDesId="JIS_075MPA_VLV_VTFL.L" SDesId="JIS_075MPA_VLV_VTFL.L" Type="LENGTH" Ask4Dist="false" Value="300.0" pg="MainDimensions" />
+			<Param Name="D" LDesId="JIS_075MPA_VLV_VTFL.D" SDesId="JIS_075MPA_VLV_VTFL.D" Type="LENGTH" Ask4Dist="false" Value="342.0" pg="MainDimensions" />
+			<Param Name="T" LDesId="JIS_075MPA_VLV_VTFL.T" SDesId="JIS_075MPA_VLV_VTFL.T" Type="LENGTH" Ask4Dist="false" Value="27.0" pg="MainDimensions" />
+			<Param Name="H" LDesId="JIS_075MPA_VLV_VTFL.H" SDesId="JIS_075MPA_VLV_VTFL.H" Type="LENGTH" Ask4Dist="false" Value="991.0" pg="MainDimensions" />
+			<Param Name="H1" LDesId="JIS_075MPA_VLV_VTFL.H1" SDesId="JIS_075MPA_VLV_VTFL.H1" Type="LENGTH" Ask4Dist="false" Value="725" pg="MainDimensions" />
+			<Param Name="D1" LDesId="JIS_075MPA_VLV_VTFL.D1" SDesId="JIS_075MPA_VLV_VTFL.D1" Type="LENGTH" Ask4Dist="false" Value="355.0" pg="MainDimensions" />
+			<Param Name="No" LDesId="JIS_075MPA_VLV_VTFL.No" SDesId="JIS_075MPA_VLV_VTFL.No" Type="INT" Ask4Dist="false" Value="8" pg="MainDimensions" />
+			<Param Name="Dh" LDesId="JIS_075MPA_VLV_VTFL.Dh" SDesId="JIS_075MPA_VLV_VTFL.Dh" Type="LENGTH" Ask4Dist="false" Value="19.0" pg="MainDimensions" />
+			<Param Name="PCD" LDesId="JIS_075MPA_VLV_VTFL.PCD" SDesId="JIS_075MPA_VLV_VTFL.PCD" Type="LENGTH" Ask4Dist="false" Value="299.0" pg="MainDimensions" />
+			<Param Name="F" LDesId="JIS_075MPA_VLV_VTFL.F" SDesId="JIS_075MPA_VLV_VTFL.F" Type="LENGTH" Ask4Dist="false" Value="3.0" pg="MainDimensions" />
+			<Param Name="G" LDesId="JIS_075MPA_VLV_VTFL.G" SDesId="JIS_075MPA_VLV_VTFL.G" Type="LENGTH" Ask4Dist="false" Value="256.0" pg="MainDimensions" />
+		</Params>
+	</Script>
+</ArrayOfScript>

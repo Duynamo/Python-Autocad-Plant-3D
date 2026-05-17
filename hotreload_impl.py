@@ -1,28 +1,7 @@
-#region ___import Python Package
-from aqa.math import *  #type: ignore
-from varmain.primitiv import *  #type: ignore
-from varmain.custom import *  #type: ignore
-#endregion
+def run(s, L=300.0, D=342.0, T=27.0, H=991.0, H1= 725, D1=355.0, No=8, Dh=19.0, PCD=299.0, F=3.0, G=256.0, **kw):
 
-#region __metaData
-@activate (Group="Valve", TooltipShort="Gate Valve JIS7.5K",TooltipLong="Gate Valve with Handwheel",FirstPortEndtypes="FL",LengthUnit="mm",Ports="2") #type: ignore
-@group("MainDimensions") #type: ignore
-@param(L=LENGTH, TooltipShort="Length (Face to Face)") #type: ignore
-@param(D=LENGTH, TooltipShort="Flange Diameter") #type: ignore
-@param(T=LENGTH, TooltipShort="Flange Thickness") #type: ignore
-@param(H=LENGTH, TooltipShort="Total Height") #type: ignore
-@param(H1=LENGTH, TooltipShort="Total Height") #type: ignore
-@param(D1=LENGTH, TooltipShort="Handle Diameter") #type: ignore
-@param(No=INT, TooltipShort="Number of holes") #type: ignore
-@param(Dh=LENGTH, TooltipShort="Bolt hole Diameter") #type: ignore
-@param(PCD=LENGTH, TooltipShort="PCDA") #type: ignore
-@param(F=LENGTH, TooltipShort="Groove on Flange Diameter Thickness") #type: ignore
-@param(G=LENGTH, TooltipShort="Groove on Flange Diameter") #type: ignore
+# sample parameters for Check Valve DN 200 Flange 7.5K:
 
-# (testacpscript "JIS_075MPA_VLV_VTFL")
-
-def JIS_075MPA_VLV_VTFL(s, L=300.0, D=342.0, T=27.0, H=991.0, H1= 725, D1=355.0, No=8, Dh=19.0, PCD=299.0, F=3.0, G=256.0, **kw):
-# Lưu ý khi move đối tượng. Mặc định khi được tạo, khố sẽ được tạo ra theo dạng đối xứng quanh gốc tọa độ (0, 0, 0). Khi move, đối tượng sẽ được dịch chuyển theo vector từ gốc đến điểm mới. Nếu muốn đối tượng nằm ở vị trí chính xác, cần tính toán vector dịch chuyển dựa trên kích thước và vị trí mong muốn của đối tượng.
     # 1. Left Flange
     f1_G = CYLINDER(s, R=G/2, H=F).rotateY(90).translate((-L/2 , 0, 0)) #type: ignore
     f1 = CYLINDER(s, R=D/2, H=T).rotateY(90).translate((-L/2 + F, 0, 0)) #type: ignore
@@ -160,4 +139,3 @@ def JIS_075MPA_VLV_VTFL(s, L=300.0, D=342.0, T=27.0, H=991.0, H1= 725, D1=355.0,
     
     return f1
 
-OUT = JIS_075MPA_VLV_VTFL

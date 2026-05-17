@@ -1,0 +1,87 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<MsgList xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+	<ToolTipLongColl>
+		<Data id="hotreload_L">Gate Valve with Handwheel</Data>
+		<Data id="JIS_075MPA_VLV_VCFL_L">Hot-Reload for complex valve script</Data>
+		<Data id="JIS_075MPA_VLV_VTFL_L">Gate Valve with Handwheel</Data>
+		<Data id="JIS_100MPA_VLV_VCFL_L">Hot-Reload for complex valve script</Data>
+		<Data id="JIS_100MPA_VLV_VTFL_L">Gate Valve with Handwheel</Data>
+		<Data id="CheckValve_L">Swing Check Valve with Side Cover</Data>
+		<Data id="DiaphragmValve_L">Diaphragm Valve with Bonnet Cover</Data>
+	</ToolTipLongColl>
+	<ToolTipShortColl>
+		<Data id="hotreload">Gate Valve JIS7.5K</Data>
+		<Data id="hotreload.L">Length (Face to Face)</Data>
+		<Data id="hotreload.D">Flange Diameter</Data>
+		<Data id="hotreload.T">Flange Thickness</Data>
+		<Data id="hotreload.H">Total Height</Data>
+		<Data id="hotreload.H1">Total Height</Data>
+		<Data id="hotreload.D1">Handle Diameter</Data>
+		<Data id="hotreload.No">Number of holes</Data>
+		<Data id="hotreload.Dh">Bolt hole Diameter</Data>
+		<Data id="hotreload.PCD">PCDA</Data>
+		<Data id="hotreload.F">Groove on Flange Diameter Thickness</Data>
+		<Data id="hotreload.G">Groove on Flange Diameter</Data>
+		<Data id="JIS_075MPA_VLV_VCFL">Hot-Reload Valve</Data>
+		<Data id="JIS_075MPA_VLV_VCFL.L">Length (Face to Face)</Data>
+		<Data id="JIS_075MPA_VLV_VCFL.D">Flange Diameter</Data>
+		<Data id="JIS_075MPA_VLV_VCFL.T">Flange Thickness</Data>
+		<Data id="JIS_075MPA_VLV_VCFL.H">Total Height</Data>
+		<Data id="JIS_075MPA_VLV_VCFL.H1">Total Height without top flange</Data>
+		<Data id="JIS_075MPA_VLV_VCFL.D1">Handle Diameter</Data>
+		<Data id="JIS_075MPA_VLV_VCFL.No">Number of holes</Data>
+		<Data id="JIS_075MPA_VLV_VCFL.Dh">Bolt hole Diameter</Data>
+		<Data id="JIS_075MPA_VLV_VCFL.PCD">PCDA</Data>
+		<Data id="JIS_075MPA_VLV_VCFL.F">Groove on Flange Diameter Thickness</Data>
+		<Data id="JIS_075MPA_VLV_VCFL.G">Groove on Flange Diameter</Data>
+		<Data id="JIS_075MPA_VLV_VTFL">Gate Valve JIS7.5K</Data>
+		<Data id="JIS_075MPA_VLV_VTFL.L">Length (Face to Face)</Data>
+		<Data id="JIS_075MPA_VLV_VTFL.D">Flange Diameter</Data>
+		<Data id="JIS_075MPA_VLV_VTFL.T">Flange Thickness</Data>
+		<Data id="JIS_075MPA_VLV_VTFL.H">Total Height</Data>
+		<Data id="JIS_075MPA_VLV_VTFL.H1">Total Height</Data>
+		<Data id="JIS_075MPA_VLV_VTFL.D1">Handle Diameter</Data>
+		<Data id="JIS_075MPA_VLV_VTFL.No">Number of holes</Data>
+		<Data id="JIS_075MPA_VLV_VTFL.Dh">Bolt hole Diameter</Data>
+		<Data id="JIS_075MPA_VLV_VTFL.PCD">PCDA</Data>
+		<Data id="JIS_075MPA_VLV_VTFL.F">Groove on Flange Diameter Thickness</Data>
+		<Data id="JIS_075MPA_VLV_VTFL.G">Groove on Flange Diameter</Data>
+		<Data id="JIS_100MPA_VLV_VCFL">Hot-Reload Valve</Data>
+		<Data id="JIS_100MPA_VLV_VCFL.L">Length (Face to Face)</Data>
+		<Data id="JIS_100MPA_VLV_VCFL.D">Flange Diameter</Data>
+		<Data id="JIS_100MPA_VLV_VCFL.T">Flange Thickness</Data>
+		<Data id="JIS_100MPA_VLV_VCFL.H">Total Height</Data>
+		<Data id="JIS_100MPA_VLV_VCFL.H1">Total Height without top flange</Data>
+		<Data id="JIS_100MPA_VLV_VCFL.D1">Handle Diameter</Data>
+		<Data id="JIS_100MPA_VLV_VCFL.No">Number of holes</Data>
+		<Data id="JIS_100MPA_VLV_VCFL.Dh">Bolt hole Diameter</Data>
+		<Data id="JIS_100MPA_VLV_VCFL.PCD">PCDA</Data>
+		<Data id="JIS_100MPA_VLV_VTFL">Gate Valve JIS7.5K</Data>
+		<Data id="JIS_100MPA_VLV_VTFL.L">Length (Face to Face)</Data>
+		<Data id="JIS_100MPA_VLV_VTFL.D">Flange Diameter</Data>
+		<Data id="JIS_100MPA_VLV_VTFL.T">Flange Thickness</Data>
+		<Data id="JIS_100MPA_VLV_VTFL.H">Total Height</Data>
+		<Data id="JIS_100MPA_VLV_VTFL.H1">Total Height</Data>
+		<Data id="JIS_100MPA_VLV_VTFL.D1">Handle Diameter</Data>
+		<Data id="JIS_100MPA_VLV_VTFL.No">Number of holes</Data>
+		<Data id="JIS_100MPA_VLV_VTFL.Dh">Bolt hole Diameter</Data>
+		<Data id="JIS_100MPA_VLV_VTFL.PCD">PCDA</Data>
+		<Data id="CheckValve">Check Valve</Data>
+		<Data id="CheckValve.L">Length (Face to Face)</Data>
+		<Data id="CheckValve.D">Flange Diameter</Data>
+		<Data id="CheckValve.T">Flange Thickness</Data>
+		<Data id="CheckValve.D1">Body Diameter (Middle)</Data>
+		<Data id="CheckValve.D2">Neck Diameter</Data>
+		<Data id="CheckValve.B">Side Cover Distance</Data>
+		<Data id="DiaphragmValve">Diaphragm Valve</Data>
+		<Data id="DiaphragmValve.L">Length (Face to Face)</Data>
+		<Data id="DiaphragmValve.D">Flange Diameter</Data>
+		<Data id="DiaphragmValve.T">Flange Thickness</Data>
+		<Data id="DiaphragmValve.H">Total Height</Data>
+	</ToolTipShortColl>
+	<ParamGroups>
+		<Data id="MainDimensions">MainDimensions</Data>
+	</ParamGroups>
+	<EnumColl>
+	</EnumColl>
+</MsgList>

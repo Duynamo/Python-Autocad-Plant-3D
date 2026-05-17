@@ -16,32 +16,20 @@ from varmain.custom import *  #type: ignore
 @param(No=INT, TooltipShort="Number of holes") #type: ignore
 @param(Dh=LENGTH, TooltipShort="Bolt hole Diameter") #type: ignore
 @param(PCD=LENGTH, TooltipShort="PCDA") #type: ignore
-@param(F=LENGTH, TooltipShort="Groove on Flange Diameter Thickness") #type: ignore
-@param(G=LENGTH, TooltipShort="Groove on Flange Diameter") #type: ignore
 
-# (testacpscript "JIS_075MPA_VLV_VTFL")
+# (testacpscript "JIS_100MPA_VLV_VTFL")
 
-def JIS_075MPA_VLV_VTFL(s, L=300.0, D=342.0, T=27.0, H=991.0, H1= 725, D1=355.0, No=8, Dh=19.0, PCD=299.0, F=3.0, G=256.0, **kw):
+def JIS_100MPA_VLV_VTFL(s, L=290.0, D=330.0, T=30.0, H=991.0, H1= 725, D1=355.0, No=12, Dh=23.0, PCD=290.0, **kw):
 # Lưu ý khi move đối tượng. Mặc định khi được tạo, khố sẽ được tạo ra theo dạng đối xứng quanh gốc tọa độ (0, 0, 0). Khi move, đối tượng sẽ được dịch chuyển theo vector từ gốc đến điểm mới. Nếu muốn đối tượng nằm ở vị trí chính xác, cần tính toán vector dịch chuyển dựa trên kích thước và vị trí mong muốn của đối tượng.
     # 1. Left Flange
-    f1_G = CYLINDER(s, R=G/2, H=F).rotateY(90).translate((-L/2 , 0, 0)) #type: ignore
-    f1 = CYLINDER(s, R=D/2, H=T).rotateY(90).translate((-L/2 + F, 0, 0)) #type: ignore
-    f1.uniteWith(f1_G)
-    f1_G.erase()
-    
+    f1 = CYLINDER(s, R=D/2, H=T).rotateY(90).translate((-L/2 , 0, 0)) #type: ignore
+
     # 2. Right Flange
-    f2_G = CYLINDER(s, R=G/2, H=F).rotateY(90).translate((L/2- F , 0, 0)) #type: ignore
-    f2 = CYLINDER(s, R=D/2, H=T).rotateY(90).translate((L/2 -T- F , 0, 0)) #type: ignore
-    f2.uniteWith(f2_G)
-    f2_G.erase()
-    
-    # Gộp luôn cụm bích phải vào Root f1
-    f1.uniteWith(f2)
-    f2.erase()
+    f2 = CYLINDER(s, R=D/2, H=T).rotateY(90).translate((L/2 -T , 0, 0)) #type: ignore
 
     # 3. Body 1 (Horizontal cylinders connecting left and right flanges)
     body1_D = D * 0.6
-    body1_L = (L - 2*T - 2*F) 
+    body1_L = (L - 2*T ) 
     body1 = CYLINDER(s, R=body1_D/2, H=body1_L).rotateY(90).translate((-body1_L/2, 0, 0)) #type: ignore
     
     f1.uniteWith(body1)
@@ -160,4 +148,4 @@ def JIS_075MPA_VLV_VTFL(s, L=300.0, D=342.0, T=27.0, H=991.0, H1= 725, D1=355.0,
     
     return f1
 
-OUT = JIS_075MPA_VLV_VTFL
+OUT = JIS_100MPA_VLV_VTFL

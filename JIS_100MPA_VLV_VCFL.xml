@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ArrayOfScript xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+	<Script Name="JIS_100MPA_VLV_VCFL" LDesId="JIS_100MPA_VLV_VCFL_L" SDesId="JIS_100MPA_VLV_VCFL" ConnPortNum="2" LengthUnit="mm" >
+		<Params>
+			<Param Name="L" LDesId="JIS_100MPA_VLV_VCFL.L" SDesId="JIS_100MPA_VLV_VCFL.L" Type="LENGTH" Ask4Dist="false" Value="500.0" pg="MainDimensions" />
+			<Param Name="D" LDesId="JIS_100MPA_VLV_VCFL.D" SDesId="JIS_100MPA_VLV_VCFL.D" Type="LENGTH" Ask4Dist="false" Value="330.0" pg="MainDimensions" />
+			<Param Name="T" LDesId="JIS_100MPA_VLV_VCFL.T" SDesId="JIS_100MPA_VLV_VCFL.T" Type="LENGTH" Ask4Dist="false" Value="26.0" pg="MainDimensions" />
+			<Param Name="H" LDesId="JIS_100MPA_VLV_VCFL.H" SDesId="JIS_100MPA_VLV_VCFL.H" Type="LENGTH" Ask4Dist="false" Value="260.0" pg="MainDimensions" />
+			<Param Name="H1" LDesId="JIS_100MPA_VLV_VCFL.H1" SDesId="JIS_100MPA_VLV_VCFL.H1" Type="LENGTH" Ask4Dist="false" Value="210.0" pg="MainDimensions" />
+			<Param Name="D1" LDesId="JIS_100MPA_VLV_VCFL.D1" SDesId="JIS_100MPA_VLV_VCFL.D1" Type="LENGTH" Ask4Dist="false" Value="340.0" pg="MainDimensions" />
+			<Param Name="No" LDesId="JIS_100MPA_VLV_VCFL.No" SDesId="JIS_100MPA_VLV_VCFL.No" Type="INT" Ask4Dist="false" Value="12" pg="MainDimensions" />
+			<Param Name="Dh" LDesId="JIS_100MPA_VLV_VCFL.Dh" SDesId="JIS_100MPA_VLV_VCFL.Dh" Type="LENGTH" Ask4Dist="false" Value="23.0" pg="MainDimensions" />
+			<Param Name="PCD" LDesId="JIS_100MPA_VLV_VCFL.PCD" SDesId="JIS_100MPA_VLV_VCFL.PCD" Type="LENGTH" Ask4Dist="false" Value="290.0" pg="MainDimensions" />
+		</Params>
+	</Script>
+</ArrayOfScript>

@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ArrayOfScript xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+	<Script Name="DiaphragmValve" LDesId="DiaphragmValve_L" SDesId="DiaphragmValve" ConnPortNum="2" LengthUnit="mm" >
+		<Params>
+			<Param Name="L" LDesId="DiaphragmValve.L" SDesId="DiaphragmValve.L" Type="LENGTH" Ask4Dist="false" Value="250.0" pg="MainDimensions" />
+			<Param Name="D" LDesId="DiaphragmValve.D" SDesId="DiaphragmValve.D" Type="LENGTH" Ask4Dist="false" Value="200.0" pg="MainDimensions" />
+			<Param Name="T" LDesId="DiaphragmValve.T" SDesId="DiaphragmValve.T" Type="LENGTH" Ask4Dist="false" Value="22.0" pg="MainDimensions" />
+			<Param Name="H" LDesId="DiaphragmValve.H" SDesId="DiaphragmValve.H" Type="LENGTH" Ask4Dist="false" Value="280.0" pg="MainDimensions" />
+		</Params>
+	</Script>
+</ArrayOfScript>

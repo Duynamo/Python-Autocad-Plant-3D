@@ -1,0 +1,37 @@
+Building Catalog is possible, but warnings should be addressed before attempting to add components to pipe specs.
+
+C:\AutoCAD Plant 3D 2026 Content\CPak Common\CustomScripts\Excel Catalog\JIS_075MPA_VLV&ACC.xlsx
+Errors
+	Excel file contains no errors.
+Warnings
+	Valve Compatible standard is empty
+		JIS_075MPA_VLV_VTFL,FL
+		JIS_075MPA_VLV_VCFL,FL
+	Valve DesignStd is empty
+		JIS_075MPA_VLV_VTFL,FL
+		JIS_075MPA_VLV_VCFL,FL
+	Valve Long description is empty
+		JIS_075MPA_VLV_VTFL,FL
+		JIS_075MPA_VLV_VCFL,FL
+	Valve Size Long description is empty
+		JIS_075MPA_VLV_VTFL,FL
+		JIS_075MPA_VLV_VCFL,FL
+	Valve ISO SKEY is empty
+		JIS_075MPA_VLV_VTFL,FL
+		JIS_075MPA_VLV_VCFL,FL
+	Valve ISO type is empty
+		JIS_075MPA_VLV_VTFL,FL
+		JIS_075MPA_VLV_VCFL,FL
+	Valve Pressure class is empty in port1
+		JIS_075MPA_VLV_VTFL,FL
+		JIS_075MPA_VLV_VCFL,FL
+	Valve Pressure class is empty in port2
+		JIS_075MPA_VLV_VTFL,FL
+		JIS_075MPA_VLV_VCFL,FL
+Summary
+	0	Error
+	364	Warnings
+	2	Part Families
+	56	Individual parts
+	0	AutoCAD block graphic dependency
+	56	Custom Script graphic dependencies
