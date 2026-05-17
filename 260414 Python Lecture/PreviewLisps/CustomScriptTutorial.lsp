@@ -1,6 +1,0 @@
-(arxload "PnP3dACPAdapter.arx")
-(testacpscript1 "CustomScriptTutorial_1" "A=100")
-(command "_.move" (entlast) "" "0,0,0" "100,0,0")
-(testacpscript1 "CustomScriptTutorial_1" "A=200")
-(command "_.move" (entlast) "" "0,0,0" "200,0,0")
-(testacpscript1 "CustomScriptTutorial_2" "A=100")
