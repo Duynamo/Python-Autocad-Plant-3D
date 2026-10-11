@@ -6,42 +6,42 @@
 		<FirstPortEndtypes>FL</FirstPortEndtypes>
 	</ScriptGroup>
 	<ScriptGroup>
-		<ScriptName>JIS_075MPA_VLV_VCFL</ScriptName>
+		<ScriptName>JIS_7K5_VLV_VCFL</ScriptName>
 		<Group>Valve</Group>
 		<FirstPortEndtypes></FirstPortEndtypes>
 	</ScriptGroup>
 	<ScriptGroup>
-		<ScriptName>JIS_075MPA_VLV_VTFL</ScriptName>
+		<ScriptName>JIS_7K5_VLV_VTFL</ScriptName>
 		<Group>Valve</Group>
 		<FirstPortEndtypes>FL</FirstPortEndtypes>
 	</ScriptGroup>
 	<ScriptGroup>
-		<ScriptName>JIS_100MPA_VLV_VCFL</ScriptName>
+		<ScriptName>JIS_10K_VLV_VCFL</ScriptName>
 		<Group>Valve</Group>
 		<FirstPortEndtypes></FirstPortEndtypes>
 	</ScriptGroup>
 	<ScriptGroup>
-		<ScriptName>JIS_100MPA_VLV_VTFL</ScriptName>
+		<ScriptName>JIS_10K_VLV_VTFL</ScriptName>
 		<Group>Valve</Group>
 		<FirstPortEndtypes>FL</FirstPortEndtypes>
 	</ScriptGroup>
 	<ScriptGroup>
-		<ScriptName>JIS_075MPA_VLV_VCFL</ScriptName>
+		<ScriptName>JIS_7K5_VLV_VCFL</ScriptName>
 		<Group>Valve</Group>
 		<FirstPortEndtypes></FirstPortEndtypes>
 	</ScriptGroup>
 	<ScriptGroup>
-		<ScriptName>JIS_075MPA_VLV_VTFL</ScriptName>
+		<ScriptName>JIS_7K5_VLV_VTFL</ScriptName>
 		<Group>Valve</Group>
 		<FirstPortEndtypes>FL</FirstPortEndtypes>
 	</ScriptGroup>
 	<ScriptGroup>
-		<ScriptName>JIS_100MPA_VLV_VCFL</ScriptName>
+		<ScriptName>JIS_10K_VLV_VCFL</ScriptName>
 		<Group>Valve</Group>
 		<FirstPortEndtypes></FirstPortEndtypes>
 	</ScriptGroup>
 	<ScriptGroup>
-		<ScriptName>JIS_100MPA_VLV_VTFL</ScriptName>
+		<ScriptName>JIS_10K_VLV_VTFL</ScriptName>
 		<Group>Valve</Group>
 		<FirstPortEndtypes>FL</FirstPortEndtypes>
 	</ScriptGroup>

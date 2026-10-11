@@ -10,7 +10,7 @@ print("hotreload.py: imported") #type: ignore
 
 #Check Valve
 
-@activate (Group="Valve", TooltipShort="Gate Valve JIS7.5K",TooltipLong="Gate Valve with Handwheel",FirstPortEndtypes="FL",LengthUnit="mm",Ports="2") #type: ignore
+@activate (Group="Valve", TooltipShort="Gate Valve JIS 7K5",TooltipLong="Gate Valve with Handwheel",FirstPortEndtypes="FL",LengthUnit="mm",Ports="2") #type: ignore
 @group("MainDimensions") #type: ignore
 @param(L=LENGTH, TooltipShort="Length (Face to Face)") #type: ignore
 @param(D=LENGTH, TooltipShort="Flange Diameter") #type: ignore
