@@ -30,7 +30,7 @@ def get_flange_dimensions(rating: str = "10K", dn: int = 50, flange_type: str = 
     conn = sqlite3.connect(DB_PATH)
     cur = conn.cursor()
     cur.execute("""
-        SELECT rating, flange_type, dn, d, c, h, no, bolt_name, g, f, t, total_len, hub_small, hub_large, inner_dia
+        SELECT rating, flange_type, dn, d, c, h, no, bolt_name, g, f, t, total_len, hub_small, hub_large, d0, pipe_od, d_bore
         FROM jis_b2220
         WHERE rating = ? AND flange_type = ? AND dn = ?
     """, (rating_clean, type_clean, dn))
@@ -57,7 +57,10 @@ def get_flange_dimensions(rating: str = "10K", dn: int = 50, flange_type: str = 
         total_len=row[11] if row[11] else row[10],
         hub_small=row[12] if row[12] else 0.0,
         hub_large=row[13] if row[13] else 0.0,
-        inner_dia=row[14] if row[14] else 0.0
+        d0=row[14],
+        pipe_od=row[15],
+        d_bore=row[16],
+        inner_dia=row[14]
     )
     _CACHE[cache_key] = dim
     return dim

@@ -23,4 +23,11 @@ class FlangeDimensions:
     total_len: float     # Tổng chiều dài bích (T)
     hub_small: float     # Đường kính cổ nhỏ (a)
     hub_large: float     # Đường kính cổ lớn (b)
-    inner_dia: float     # Đường kính trong lỗ khoét (d0 / d)
+
+    # 4. Nhóm kích thước đường kính trong & hàn ống (内径 & 鋼管外径)
+    d0: float            # Đường kính trong lỗ khoét bích hàn trượt SOP, SOH, SW (d0) - Nơi lồng ống vào để hàn
+    pipe_od: float       # Đường kính ngoài ống thép tương ứng (OD ống, khớp với mép hàn a của WN)
+    d_bore: float        # Đường kính trong lòng ống / cổ hàn WN, SW (d a) hoặc IT (d 参考)
+    
+    # Alias hỗ trợ tương thích ngược
+    inner_dia: float = 0.0 # Tương đương d0 hoặc d_bore

@@ -67,7 +67,8 @@ def JisFlange(
     flange_type: str = "IT",
     has_holes: bool = False,
     has_rf: bool = True,
-    has_hub: bool = False
+    has_hub: bool = False,
+    has_bore: bool = False
 ) -> JisFlangeObject:
     """Hàm Factory chính tạo mặt bích tiêu chuẩn Nhật Bản JIS B 2220.
     
@@ -79,6 +80,7 @@ def JisFlange(
         has_holes: True nếu muốn đục lỗ bu lông (LOD cao). Mặc định là False (nhẹ model).
         has_rf: True nếu muốn gờ nổi Raised Face. Mặc định là True.
         has_hub: True nếu muốn dựng thêm cổ côn bích. Mặc định là False.
+        has_bore: True nếu muốn khoét rỗng lỗ tâm d0 hoặc d_bore (khi dùng làm bích rời kết nối ống).
         
     Returns:
         JisFlangeObject: Đối tượng Solid bọc ngoài với đầy đủ method xoay, dịch chuyển và thuộc tính .dim.
@@ -89,6 +91,7 @@ def JisFlange(
         dim=dim,
         has_holes=has_holes,
         has_rf=has_rf,
-        has_hub=has_hub
+        has_hub=has_hub,
+        has_bore=has_bore
     )
     return JisFlangeObject(shape, dim)
