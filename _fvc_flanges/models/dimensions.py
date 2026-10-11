@@ -19,7 +19,7 @@ class FlangeDimensions:
     f: float             # Chiều cao gờ nâng (f)
     
     # 3. Kích thước bích & cổ bích
-    t: float             # Chiều dày bích (t)
+    t: float             # Tổng chiều dày bích (t) - ĐÃ BAO GỒM CHIỀU CAO GỜ NÂNG f (Vành ngoài dày t - f)
     total_len: float     # Tổng chiều dài bích (T)
     hub_small: float     # Đường kính cổ nhỏ (a)
     hub_large: float     # Đường kính cổ lớn (b)
@@ -31,3 +31,8 @@ class FlangeDimensions:
     
     # Alias hỗ trợ tương thích ngược
     inner_dia: float = 0.0 # Tương đương d0 hoặc d_bore
+
+    @property
+    def base_t(self) -> float:
+        """Chiều dày vành bích cơ sở ngoài (phần không có gờ nâng) = t - f"""
+        return (self.t - self.f) if self.f > 0 else self.t
