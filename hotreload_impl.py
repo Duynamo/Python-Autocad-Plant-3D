@@ -1,141 +1,39 @@
-def run(s, L=300.0, D=342.0, T=27.0, H=991.0, H1= 725, D1=355.0, No=8, Dh=19.0, PCD=299.0, F=3.0, G=256.0, **kw):
+import sys
+import os
 
-# sample parameters for Check Valve DN 200 Flange 7.5K:
+# Đảm bảo AutoCAD nhận diện được package _fvc_flanges
+current_dir = os.path.dirname(os.path.abspath(__file__))
+if current_dir not in sys.path:
+    sys.path.append(current_dir)
 
-    # 1. Left Flange
-    f1_G = CYLINDER(s, R=G/2, H=F).rotateY(90).translate((-L/2 , 0, 0)) #type: ignore
-    f1 = CYLINDER(s, R=D/2, H=T).rotateY(90).translate((-L/2 + F, 0, 0)) #type: ignore
-    f1.uniteWith(f1_G)
-    f1_G.erase()
-    
-    # 2. Right Flange
-    f2_G = CYLINDER(s, R=G/2, H=F).rotateY(90).translate((L/2- F , 0, 0)) #type: ignore
-    f2 = CYLINDER(s, R=D/2, H=T).rotateY(90).translate((L/2 -T- F , 0, 0)) #type: ignore
-    f2.uniteWith(f2_G)
-    f2_G.erase()
-    
-    # Gộp luôn cụm bích phải vào Root f1
-    f1.uniteWith(f2)
-    f2.erase()
+# Tự động reload package _fvc_flanges để luôn cập nhật logic hình học mới nhất
+for mod_name in list(sys.modules.keys()):
+    if mod_name.startswith('_fvc_flanges'):
+        del sys.modules[mod_name]
 
-    # 3. Body 1 (Horizontal cylinders connecting left and right flanges)
-    body1_D = D * 0.6
-    body1_L = (L - 2*T - 2*F) 
-    body1 = CYLINDER(s, R=body1_D/2, H=body1_L).rotateY(90).translate((-body1_L/2, 0, 0)) #type: ignore
-    
-    f1.uniteWith(body1)
-    body1.erase()
-    
-    # 4. Body 2 3 4 (Phần body chứa đĩa van)
-    # Chiều cao phân bổ cho phần này là H / 2  
-    body2_D = D * 0.7
-    body2_L = 0.4 * L
-    body2 = CYLINDER(s, R=body2_D/2, H=body2_L).rotateY(90).translate((-body2_L/2, 0, 0))#type: ignore
+from _fvc_flanges import JisFlange
 
-    body4_H = 0.4 * L
-    body4_L = 0.7 * D
-    body4_W = H/2 - body2_D / 2  #type: ignore
-    body4 = BOX(s, L=body4_L, W=body4_W, H=body4_H).rotateY(0).translate((0, 0, body4_W / 2 )) #type: ignore
-    body4.uniteWith(body2)
-    body2.erase()
+def run(s, **kw):
+    """Hàm test dựng hình mặt bích JIS B 2220."""
+    # 1. Khởi tạo mặt bích
+    flange = JisFlange(
+        s=s,
+        rating="10K",       # '10K', '7K5', '5K', '20K'
+        dn=200,             # Cỡ danh định DN (ví dụ: 50, 80, 100, 200...)
+        flange_type="SOP",   # 'IT' (cho Van), 'SOP', 'WN', 'BL'
+        has_holes=True,     # True: đục lỗ bu lông (LOD cao để kiểm tra)
+        has_rf=True,        # True: có gờ nổi Raised Face (chiều cao f)
+        has_hub=False,      # True: có cổ côn
+        has_bore=True       # True: khoét rỗng lỗ tâm
+    )
 
-    body3_D = D * 0.7
-    body3_L = 0.4 * L
-    body3 = CYLINDER(s, R=body3_D/2, H=body3_L).rotateY(90).translate((-body2_L/2, 0, H/2 - body3_D/2))#type: ignore
+    dim = flange.dim
 
-    body4.uniteWith(body3)
-    body3.erase()
-    
-    f1.uniteWith(body4)
-    body4.erase()
+    # 2. Định nghĩa Ports (Bắt buộc cho AutoCAD Plant 3D nhận diện)
+    # Port 1: Tại mặt tiếp xúc gioăng RF (Z = dim.t), vector hướng ra ngoài +Z
+    s.setPoint((0, 0, dim.t), (0, 0, 1))
+    # Port 2: Tại mặt sau bích (Z = 0), vector hướng ra ngoài -Z
+    s.setPoint((0, 0, 0), (0, 0, -1))
 
-
-    # 5. Mặt bích thân valve
-    bodyFlange_L = 0.8 * L
-
-    bodyFlange1_D = 0.6 * L
-    bodyFlange1_H = 0.8 * 2 * T
-    bodyFlange1 = CYLINDER(s, R=bodyFlange1_D/2, H=bodyFlange1_H).translate((0, bodyFlange_L/3, 0.3*H)) #type: ignore
-    f1.uniteWith(bodyFlange1)
-    bodyFlange1.erase()
-
-    bodyFlange2_D = 0.6 * L
-    bodyFlange2_H = 0.8 * 2 * T
-    bodyFlange2 = CYLINDER(s, R=bodyFlange2_D/2, H=bodyFlange2_H).translate((0, -bodyFlange_L/3, 0.3*H)) #type: ignore
-    f1.uniteWith(bodyFlange2)
-    bodyFlange2.erase()
-
-    bodyFlange3_L = bodyFlange_L - bodyFlange1_D / 2
-    bodyFlange3_H = 0.6 * L 
-    bodyFlange3_W = 0.8 * 2 * T
-    bodyFlange3 = BOX(s, L=bodyFlange3_L, W=bodyFlange3_W, H=bodyFlange3_H).translate((0, 0, 0.3*H + bodyFlange3_W/2 )) #type: ignore
-    f1.uniteWith(bodyFlange3)
-    bodyFlange3.erase()
-
-
-    # 6. Trục tay vặn
-    shaft_d = 32
-    shaft_h = H-H/2 
-    shaft = CYLINDER(s, R=shaft_d/2, H=shaft_h).translate((0, 0, H/2)) #type: ignore
-    f1.uniteWith(shaft)
-    shaft.erase()
-
-    # 7. Tay vặn
-    handwheel_d = D1
-    handwheel_h = 30
-    handwheel = CYLINDER(s, R=handwheel_d/2, H=handwheel_h).translate((0, 0, H1-handwheel_h/2)) #type: ignore
-    f1.uniteWith(handwheel)
-    # handwheel.erase()
-    
-    # 8. Top hexagon
-    hex_L = 40
-    hex_W = 40
-    hex_H = 23.1
-    hex1 = BOX(s, L=hex_L, W=hex_W, H=hex_H).translate((0, 0, H1 + handwheel_h/2))              #type: ignore
-    hex2 = BOX(s, L=hex_L, W=hex_W, H=hex_H).rotateZ(60).translate((0, 0, H1 + handwheel_h/2))  #type: ignore
-    hex3 = BOX(s, L=hex_L, W=hex_W, H=hex_H).rotateZ(120).translate((0, 0, H1 + handwheel_h/2)) #type: ignore
-
-    hex1.uniteWith(hex2)
-    hex2.erase()
-   
-    hex1.uniteWith(hex3)
-    hex3.erase()
-
-    f1.uniteWith(hex1)
-    hex1.erase()
-
-    # 9. Gân gia cường tay vặn
-    rib1_L = 0.15 * L
-    rib1_W = 20
-    rib1_H = 0.45 * L
-    rib1 = BOX(s, L=rib1_L, W=rib1_W, H=rib1_H).translate((0, 0, H/2 +rib1_W/2)) #type: ignore
-    f1.uniteWith(rib1)
-    rib1.erase() 
-
-    rib2_L = 0.2 * L
-    rib2_W = 20
-    rib2_H = 0.2 * L
-    rib2 = BOX(s, L=rib2_L, W=rib2_W, H=rib2_H).translate((0, 0,0.75*H  - rib2_W/2 - handwheel_h)) #type: ignore
-    f1.uniteWith(rib2)
-    rib2.erase() 
-
-    rib3_L = 20
-    rib3_W =  H/2 - handwheel_h
-    rib3_H = 20
-    rib3 = BOX(s, L=rib3_L, W=rib3_W, H=rib3_H).translate((-35, 0, H/2 +rib1_W/2 )) #type: ignore
-    f1.uniteWith(rib3)
-    rib3.erase()
-
-    rib4_L = 20
-    rib4_W = H/2 - handwheel_h
-    rib4_H = 20
-    rib4 = BOX(s, L=rib4_L, W=rib4_W, H=rib4_H).translate((35, 0, H/2 +rib1_W/2 )) #type: ignore
-    f1.uniteWith(rib4)
-    rib4.erase()
-    
-    # Ports
-    s.setPoint((-L/2, 0, 0), (-1, 0, 0)) # Port 1
-    s.setPoint((L/2, 0, 0), (1, 0, 0))   # Port 2
-    
-    return f1
-
+    # 3. Trả về khối Solid gốc cho AutoCAD (gọi .unwrap())
+    return flange.unwrap()

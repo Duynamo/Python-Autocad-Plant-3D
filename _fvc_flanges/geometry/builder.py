@@ -38,40 +38,42 @@ def build_jis_flange_solid(
     # 1. Tính chiều dày vành ngoài (base_t = t - f)
     base_t = dim.base_t if (has_rf and dim.f > 0) else dim.t
 
-    # Dựng đĩa bích chính (Main Disc): Chiều dày base_t
-    root_shape = CYLINDER(s, R=dim.d / 2.0, H=base_t).translate((0, 0, base_t / 2.0))
+    # Dựng đĩa bích chính (Main Disc): Chiều dày base_t, trải từ Z = 0 đến Z = base_t
+    root_shape = CYLINDER(s, R=dim.d / 2.0, H=base_t)
 
-    # 2. Gờ nâng (Raised Face): Chiều dày f, đắp tiếp từ Z = base_t đến Z = dim.t
+    # 2. Gờ nâng (Raised Face): Chiều dày f, đặt chồng tiếp từ Z = base_t đến Z = dim.t
     if has_rf and dim.f > 0 and dim.g > 0:
-        rf = CYLINDER(s, R=dim.g / 2.0, H=dim.f).translate((0, 0, base_t + dim.f / 2.0))
+        rf = CYLINDER(s, R=dim.g / 2.0, H=dim.f).translate((0, 0, base_t))
         root_shape.uniteWith(rf)
         rf.erase()
 
     # 3. Cổ bích (Hub) cho loại IT / WN nếu được yêu cầu
-    if has_hub and dim.hub_large > 0 and dim.hub_small > 0:
-        hub_h = dim.total_len - dim.t
-        if hub_h > 0:
-            hub = CONE(s, R1=dim.hub_large / 2.0, R2=dim.hub_small / 2.0, H=hub_h).translate((0, 0, -hub_h / 2.0))
-            root_shape.uniteWith(hub)
-            hub.erase()
+    hub_h = (dim.total_len - dim.t) if (dim.total_len > dim.t) else 0.0
+    if has_hub and dim.hub_large > 0 and dim.hub_small > 0 and hub_h > 0:
+        # CONE: R1 (đáy dưới tại Z=0) là hub_small, R2 (đỉnh trên tại Z=hub_h) là hub_large.
+        # Dịch chuyển xuống Z = -hub_h để đỉnh lớn nằm tại Z = 0 khớp với mặt sau bích.
+        hub = CONE(s, R1=dim.hub_small / 2.0, R2=dim.hub_large / 2.0, H=hub_h).translate((0, 0, -hub_h))
+        root_shape.uniteWith(hub)
+        hub.erase()
 
     # 4. Khoét rỗng lỗ trong (Bore) theo d0 (cho SOP) hoặc d_bore (cho WN/IT)
     if has_bore and dim.flange_type != "BL":
         bore_dia = dim.d0 if dim.flange_type in ["SOP", "SOH", "SW"] else dim.d_bore
         if bore_dia > 0:
             total_bore_h = dim.total_len + 10.0
-            bore = CYLINDER(s, R=bore_dia / 2.0, H=total_bore_h).translate((0, 0, base_t / 2.0))
+            z_bore_start = -hub_h - 5.0 if (has_hub and hub_h > 0) else -5.0
+            bore = CYLINDER(s, R=bore_dia / 2.0, H=total_bore_h).translate((0, 0, z_bore_start))
             root_shape.subtractFrom(bore)
             bore.erase()
 
     # 5. Đục lỗ bu lông (Bolt Holes) xuyên qua vành bích
     if has_holes and dim.no > 0 and dim.h > 0:
-        cut_h = dim.t + 6.0
+        cut_h = dim.t + 10.0
         for i in range(dim.no):
             angle = (2.0 * math.pi / dim.no) * i
             hx = (dim.c / 2.0) * math.cos(angle)
             hy = (dim.c / 2.0) * math.sin(angle)
-            hole = CYLINDER(s, R=dim.h / 2.0, H=cut_h).translate((hx, hy, base_t / 2.0))
+            hole = CYLINDER(s, R=dim.h / 2.0, H=cut_h).translate((hx, hy, -5.0))
             root_shape.subtractFrom(hole)
             hole.erase()
 
