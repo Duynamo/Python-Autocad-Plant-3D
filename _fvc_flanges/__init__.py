@@ -1,12 +1,13 @@
-"""Bộ thư viện FVC Flanges cho tiêu chuẩn mặt bích Nhật Bản JIS B 2220 / JIS B 2062.
+"""Package _fvc_flanges: Thư viện mặt bích tiêu chuẩn Nhật Bản JIS B 2220.
 Tương thích với AutoCAD Plant 3D.
 """
 
-from .jis_flange import JisFlange, JisFlangeObject
-from .db.reader import get_flange_dimensions
+from .jis_b2220_flange import JisB2220Flange, JisFlange, JisFlangeObject
+from .db.jis_b2220_reader import get_flange_dimensions
 from .models.dimensions import FlangeDimensions
 
 __all__ = [
+    "JisB2220Flange",
     "JisFlange",
     "JisFlangeObject",
     "get_flange_dimensions",

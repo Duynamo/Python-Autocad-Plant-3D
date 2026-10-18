@@ -5,6 +5,7 @@
 `_fvc_flanges` là thư viện Python chuyên dụng được thiết kế riêng cho **AutoCAD Plant 3D**, cung cấp giải pháp dựng hình Solid 3D tham số hóa (parametric 3D modeling) cho các loại mặt bích tiêu chuẩn công nghiệp Nhật Bản **JIS B 2220** và **JIS B 2062**.
 
 Thư viện giúp chuẩn hóa việc tạo hình mặt bích cho cả hai bài toán:
+
 1. **Dựng mặt bích độc lập (Standalone Piping Flange):** Bích nối ống như SOP, WN, BL... với đầy đủ lỗ bu lông, lỗ khoét trong và gờ Raised Face.
 2. **Dựng bích đúc liền thân thiết bị/van (Integral Flange - IT):** Dùng làm đầu nối cho các loại van (Gate Valve, Check Valve, Ball Valve...) hoặc phụ kiện đường ống.
 
@@ -39,24 +40,28 @@ _fvc_flanges/
 ## 3. Các tiêu chuẩn và chủng loại bích hỗ trợ
 
 ### 3.1. Cấp áp suất (Pressure Rating)
+
 * **`10K`** (1.0 MPa): Cỡ danh định từ **DN10 đến DN1500** (35 dải kích thước tiêu chuẩn).
 * **`7K5`** (0.75 MPa): Cỡ danh định từ **DN40 đến DN600** (15 dải kích thước tiêu chuẩn).
 * *(Dễ dàng mở rộng thêm 5K, 16K, 20K, 30K thông qua seed file)*.
 
 ### 3.2. Chủng loại mặt bích (Flange Types)
-| Mã loại | Tên tiêu chuẩn | Mô tả công dụng | Đặc điểm hình học |
-| :--- | :--- | :--- | :--- |
-| **`IT`** | Integral | Bích đúc liền trên thân van hoặc thiết bị | Có cổ côn (Hub) nối liền vào thân van/vỏ bơm |
-| **`SOP`** | Slip-On Plate | Bích phẳng hàn trượt dạng tấm | Khoét rỗng lỗ tâm $d_0$ để lồng ống thép vào hàn góc |
-| **`WN`** | Welding Neck | Bích hàn cổ cao giáp mối | Có cổ côn vát mép, đường kính trong lòng ống $d_{\text{bore}}$, mép ngoài $pipe\_od$ |
-| **`BL`** | Blind | Bích mù / Bích đặc bịt kín đầu ống | Không khoét lỗ tâm ($d_0 = 0$), độ dày tiêu chuẩn $t_{\text{bl}}$ |
+
+| Mã loại         | Tên tiêu chuẩn | Mô tả công dụng                                | Đặc điểm hình học                                                                              |
+| :---------------- | :---------------- | :------------------------------------------------- | :--------------------------------------------------------------------------------------------------- |
+| **`IT`**  | Integral          | Bích đúc liền trên thân van hoặc thiết bị | Có cổ côn (Hub) nối liền vào thân van/vỏ bơm                                                |
+| **`SOP`** | Slip-On Plate     | Bích phẳng hàn trượt dạng tấm               | Khoét rỗng lỗ tâm$d_0$ để lồng ống thép vào hàn góc                                    |
+| **`WN`**  | Welding Neck      | Bích hàn cổ cao giáp mối                      | Có cổ côn vát mép, đường kính trong lòng ống$d_{\text{bore}}$, mép ngoài $pipe\_od$ |
+| **`BL`**  | Blind             | Bích mù / Bích đặc bịt kín đầu ống       | Không khoét lỗ tâm ($d_0 = 0$), độ dày tiêu chuẩn $t_{\text{bl}}$                       |
 
 ---
 
 ## 4. Nguyên lý hình học & Hệ tọa độ chuẩn trong AutoCAD Plant 3D
 
 ### 4.1. Quy chuẩn chiều dày mặt bích JIS B 2220
+
 Theo tiêu chuẩn Nhật Bản JIS B 2220:
+
 * **$t$**: Tổng chiều dày danh định của bích — **đã bao gồm chiều cao gờ nâng $f$**.
 * **$\text{base\_t} = t - f$**: Chiều dày của vành đĩa ngoài (phần không có gờ nâng).
 * **$f$**: Chiều cao gờ Raised Face (RF) (thường là $1\text{ mm}$ với DN nhỏ, $2\text{ mm}$ với DN trung bình, $3\text{ mm}$ với DN lớn).
@@ -66,9 +71,11 @@ Theo tiêu chuẩn Nhật Bản JIS B 2220:
 * **$h$ / $N$**: Đường kính lỗ bu lông và số lượng lỗ bu lông.
 
 ### 4.2. Hệ tọa độ cục bộ (Local Coordinate System)
+
 Trong engine AutoCAD Plant 3D (`varmain.primitiv`), khối `CYLINDER` và `CONE` có đáy nằm tại $Z = 0$ và chiều cao hướng dọc trục $+Z$.
 
 `_fvc_flanges` định vị hình khối như sau:
+
 1. **Mặt sau bích (Back face):** Cố định tại **$Z = 0$**.
 2. **Vành đĩa chính (Main Disc):**
    * Bắt đầu từ $Z = 0$ đến $Z = \text{base\_t}$.
@@ -103,6 +110,7 @@ Trong engine AutoCAD Plant 3D (`varmain.primitiv`), khối `CYLINDER` và `CONE`
 ```
 
 ### 4.3. Cổng kết nối (Ports)
+
 * **Port 1 (Mặt tiếp xúc gioăng RF):** Tọa độ `(0, 0, dim.t)`, Vector hướng `(0, 0, 1)`.
 * **Port 2 (Mặt sau nối ống/hàn):** Tọa độ `(0, 0, -hub_h)` (hoặc `(0, 0, 0)` nếu không có cổ côn), Vector hướng `(0, 0, -1)`.
 
@@ -152,7 +160,7 @@ flange = JisFlange(
 * `.uniteWith(other)`: Gộp khối `other` vào bích và tự động giải phóng (`erase`) đối tượng `other`.
 * `.subtractFrom(other)`: Cắt trừ khối `other`.
 * `.unwrap()`: **Lấy đối tượng hình học gốc** để trả về cho engine AutoCAD Plant 3D.
-* `.dim`: Truy cập thông số kích thước kỹ thuật ([FlangeDimensions](file:///c:/Users/Laptop/OneDrive/Desktop/Hello%20World/Python-Autocad-Plant-3D/_fvc_flanges/models/dimensions.py)).
+* `.dim`: Truy cập thông số kích thước kỹ thuật ([FlangeDimensions](<file:///c:/Users/Laptop/OneDrive/Desktop/Hello%20World/Python-Autocad-Plant-3D/_fvc_flanges/models/dimensions.py>)).
 
 ---
 
@@ -216,7 +224,7 @@ def build_valve(s, L=300.0, DN=100, **kw):
 
     # 4. Tiếp tục dựng thân van (body) và gộp vào f_left...
     # ...
-    
+  
     # 5. Cài đặt ports hai đầu van
     s.setPoint((-L/2, 0, 0), (-1, 0, 0))
     s.setPoint((L/2, 0, 0), (1, 0, 0))
@@ -229,6 +237,7 @@ def build_valve(s, L=300.0, DN=100, **kw):
 ## 8. Hướng dẫn mở rộng thêm dữ liệu (Add new Rating/Standard)
 
 Khi cần bổ sung thêm cấp áp mới (ví dụ: `5K` hoặc `20K`):
+
 1. Thêm mảng dữ liệu thô vào file `data/seed_<rating>.py` theo cấu trúc:
    ```python
    # (DN, D, C, h, No, bolt_name, g, f, t, t_bl, T_it, a_OD, b, d0, d_bore)

@@ -2,7 +2,19 @@ import math
 try:
     from varmain.primitiv import * # type: ignore
 except ImportError:
-    pass
+    class _MockPrimitive:
+        def __init__(self, *args, **kwargs): pass
+        def translate(self, *args, **kwargs): return self
+        def rotateX(self, *args, **kwargs): return self
+        def rotateY(self, *args, **kwargs): return self
+        def rotateZ(self, *args, **kwargs): return self
+        def uniteWith(self, *args, **kwargs): return self
+        def subtractFrom(self, *args, **kwargs): return self
+        def intersectWith(self, *args, **kwargs): return self
+        def erase(self): pass
+    CYLINDER = _MockPrimitive
+    CONE = _MockPrimitive
+    BOX = _MockPrimitive
 from ..models.dimensions import FlangeDimensions
 
 def build_jis_flange_solid(

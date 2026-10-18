@@ -3,9 +3,12 @@ from typing import Optional
 
 @dataclass(frozen=True)
 class FlangeDimensions:
+    standard: str        # Tiêu chuẩn mặt bích ('JIS_B_2220', 'JIS_B_2239'...)
     rating: str          # Cấp áp: '10K', '7K5', '5K', '20K'
     flange_type: str     # Loại bích: 'IT', 'SOP', 'SOH', 'WN', 'BL', 'SW', 'TR', 'LJ'
     dn: int              # Cỡ danh định A (10, 15, ..., 1500)
+
+
     
     # 1. Kích thước kết nối bu lông (接合寸法)
     d: float             # Đường kính ngoài mặt bích (D)
