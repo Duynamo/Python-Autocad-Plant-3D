@@ -125,27 +125,42 @@ def build_hex_prism(s, width_across_flats: float, height: float):
     return hex_solid
 
 
-def HexNut(s, bolt_size: str = "M16", has_hole: bool = True) -> FastenerObject:
-    """Tạo đai ốc lục giác (Hex Nut) chuẩn JIS B 1181 (Style 1).
+def HexNut(s, bolt_size: str = "M16", series: str = "ISO_STYLE_1", has_hole: bool = True) -> FastenerObject:
+    """Tạo đai ốc lục giác (Hex Nut) chuẩn JIS B 1181 : 2014.
     Gốc tọa độ đặt tại tâm đáy đai ốc (Z = 0 đến Z = m).
     
     Args:
         s: Subpart container
         bolt_size: Cỡ ren ('M12', 'M16', 'M20', 'M30x3'...)
+        series: Dòng series ('ISO_STYLE_1', 'ISO_STYLE_2', 'ISO_STYLE_0_THIN', 'ANNEX_JA_REGULAR'...)
         has_hole: True nếu muốn khoét rỗng lỗ ren ở giữa
     """
-    spec = get_metric_bolt_spec(bolt_size)
-    if not spec:
-        spec = MetricBoltSpec("JIS_B_1180", bolt_size, 16.0, 2.0, 24.0, 27.71, 13.0, 10.0, 3.0, 30.0)
+    from ..db.jis_b1181_reader import get_nut_dimension
+    
+    nut_dim = get_nut_dimension(bolt_size, series)
+    if nut_dim:
+        s_val = nut_dim.s_nominal
+        m_val = nut_dim.m_nominal
+        d_val = nut_dim.nominal_dia
+        # Tạo spec tương thích ngược cho FastenerObject
+        spec = MetricBoltSpec("JIS_B_1181", bolt_size, d_val, nut_dim.pitch, s_val, nut_dim.e_min, m_val, m_val, 3.0, 30.0)
+    else:
+        spec = get_metric_bolt_spec(bolt_size)
+        if not spec:
+            spec = MetricBoltSpec("JIS_B_1181", bolt_size, 16.0, 2.0, 24.0, 27.71, 14.8, 10.0, 3.0, 30.0)
+        s_val = spec.s
+        m_val = spec.m
+        d_val = spec.nominal_dia
         
-    nut_solid = build_hex_prism(s, width_across_flats=spec.s, height=spec.m)
+    nut_solid = build_hex_prism(s, width_across_flats=s_val, height=m_val)
     
     if has_hole:
-        hole_r = spec.nominal_dia / 2.0
+        hole_r = d_val / 2.0
         # Khoét lỗ ren xuyên suốt chiều dày đai ốc từ Z = -0.1*m đến 1.1*m
-        hole = prim.CYLINDER(s, R=hole_r, H=spec.m * 1.2, O=0).translate((0, 0, -spec.m * 0.1))
+        hole = prim.CYLINDER(s, R=hole_r, H=m_val * 1.2, O=0).translate((0, 0, -m_val * 0.1))
         nut_solid.subtractFrom(hole)
         hole.erase()
         
     return FastenerObject(nut_solid, spec)
+
 

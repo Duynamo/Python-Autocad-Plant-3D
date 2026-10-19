@@ -2,7 +2,7 @@ from typing import Optional
 try:
     import varmain.primitiv as prim
 except ImportError:
-    prim = None
+    from .nut import prim
 
 class GasketObject:
     """Wrapper cho đối tượng Solid 3D Gioăng đệm làm kín."""

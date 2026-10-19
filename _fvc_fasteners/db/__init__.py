@@ -6,6 +6,23 @@ from .jis_b1180_reader import (
     list_available_bolt_types,
     calculate_thread_length,
 )
+from .jis_b1181_reader import (
+    get_nut_dimension,
+    get_nut_type,
+    list_available_nut_types,
+    list_available_nut_sizes,
+    get_hex_nut,
+    get_matching_nut_for_bolt,
+)
+from .jis_b1256_reader import (
+    get_washer_dimension,
+    get_washer_type,
+    list_available_washer_types,
+    list_available_washer_sizes,
+    get_hardness_spec,
+    get_plain_washer,
+    get_matching_washer_for_bolt,
+)
 
 __all__ = [
     "get_bolt_for_flange",
@@ -15,4 +32,18 @@ __all__ = [
     "get_bolt_type",
     "list_available_bolt_types",
     "calculate_thread_length",
+    "get_nut_dimension",
+    "get_nut_type",
+    "list_available_nut_types",
+    "list_available_nut_sizes",
+    "get_hex_nut",
+    "get_matching_nut_for_bolt",
+    "get_washer_dimension",
+    "get_washer_type",
+    "list_available_washer_types",
+    "list_available_washer_sizes",
+    "get_hardness_spec",
+    "get_plain_washer",
+    "get_matching_washer_for_bolt",
 ]
+
