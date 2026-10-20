@@ -2,6 +2,12 @@ import sys
 import os
 import math
 
+if sys.platform == "win32":
+    try:
+        sys.stdout.reconfigure(encoding="utf-8")
+    except Exception:
+        pass
+
 # 1. Đảm bảo AutoCAD nhận diện được các package _fvc_flanges và _fvc_fasteners
 current_dir = os.path.dirname(os.path.abspath(__file__))
 if current_dir not in sys.path:
@@ -24,7 +30,9 @@ from _fvc_fasteners import (
     PlainWasher,
     Gasket,
     get_hex_bolt,
+    get_hex_nut,
     get_bolt_for_flange,
+    get_nut_dimension,
     get_washer_dimension,
     get_auto_gasket_for_flange,
 )
@@ -52,15 +60,28 @@ TEST_GASKET_THICKNESS = 0.0             # 0.0: tự động chuẩn JIS B 2404 (
 TEST_HAS_WASHERS = True                 # True: có thêm vòng đệm JIS B 1256 dưới mũ và đai ốc
 TEST_WASHER_SERIES = "ISO_NORMAL_A"     # Dòng đệm: 'ISO_NORMAL_A', 'ISO_NORMAL_CHAMFERED_A', 'ANNEX_JA_SQUARE'...
 
+# CẤU HÌNH THÔNG SỐ TEST BU LÔNG (HEX BOLT) JIS B 1180:
+TEST_BOLT_SIZE = "M16"                  # Cỡ ren bu lông ('M10', 'M12', 'M16', 'M20', 'M22', 'M24', 'M30'...)
+TEST_BOLT_LENGTH = 65.0                 # Chiều dài thân bu lông l (mm)
+TEST_BOLT_TYPE = "TYPE_2_NOMINAL_COARSE_GRADE_AB"  # Loại bu lông JIS B 1180 (Type 1 -> Type 7)
+TEST_BOLT_SERIES = None                 # None: chuẩn ISO tiêu chuẩn; "ANNEX_JA": chuẩn giác cờ lê Nhật cũ
+
+# CẤU HÌNH THÔNG SỐ TEST ĐAI ỐC (HEX NUT) JIS B 1181:
+TEST_NUT_SIZE = "M16"                   # Cỡ ren đai ốc ('M10', 'M12', 'M16', 'M20', 'M22', 'M24', 'M30'...)
+TEST_NUT_SERIES = "ISO_STYLE_1"         # Dòng đai ốc: 'ISO_STYLE_1', 'ISO_STYLE_2', 'ISO_STYLE_0_THIN', 'ANNEX_JA_REGULAR', 'ANNEX_JA_SMALL'
+TEST_NUT_HAS_HOLE = True                # True: khoét rỗng lỗ ren xuyên suốt; False: khối lục giác đặc nguyên bản
+
 # ==============================================================================
-# CHỌN CHẾ ĐỘ TEST (BẠN CHỌN 1 TRONG 5 CHẾ ĐỘ DƯỚI ĐÂY)
+# CHỌN CHẾ ĐỘ TEST (BẠN CHỌN 1 TRONG CÁC CHẾ ĐỘ DƯỚI ĐÂY)
 # ==============================================================================
 # - "FLANGE_CONNECTION_COMBO": CỤM COMBO 2 BÍCH ĐỐI ĐẦU: bolt -> flange1 -> gasket -> flange2 -> nut [MẶC ĐỊNH]
 # - "FLANGE_WITH_BOLTS":       1 Mặt bích JIS B 2220 cắm dàn bu lông quanh vòng chia
-# - "STANDALONE_BOLT":         1 Con bu lông lục giác JIS B 1180 đứng độc lập (soi giác s, mũ k)
+# - "STANDALONE_BOLT":         1 Con bu lông lục giác JIS B 1180 đứng độc lập (soi giác s, mũ k, thân l)
+# - "STANDALONE_NUT":          1 Con đai ốc lục giác JIS B 1181 đứng độc lập (soi giác s, chiều dày m, lỗ ren d)
 # - "BOLT_AND_NUT":            1 Con bu lông lục giác kèm Đai ốc vặn ở đuôi ren
 # - "BOLT_NUT_WASHER":         1 Con bu lông lục giác kèm Vòng đệm JIS B 1256 và Đai ốc
 TEST_MODE = "FLANGE_CONNECTION_COMBO"
+# TEST_MODE = "STANDALONE_NUT"
 
 
 def run(s, **kw):
@@ -248,47 +269,133 @@ def run(s, **kw):
     # --------------------------------------------------------------------------
     # CHẾ ĐỘ 3: BU LÔNG LỤC GIÁC JIS B 1180 ĐỨNG ĐỘC LẬP (STANDALONE_BOLT)
     # --------------------------------------------------------------------------
-    elif TEST_MODE == "STANDALONE_BOLT":
+    elif TEST_MODE in ("STANDALONE_BOLT", "BOLT", "BOLT_ONLY"):
         bolt = HexBolt(
             s=s,
-            bolt_size="M16",
-            length=65.0,
-            type_code="TYPE_2_NOMINAL_COARSE_GRADE_AB",
+            bolt_size=TEST_BOLT_SIZE,
+            length=TEST_BOLT_LENGTH,
+            type_code=TEST_BOLT_TYPE,
+            series_override=TEST_BOLT_SERIES,
         )
         spec = bolt.spec
-        k_val = spec.head.k_nominal if hasattr(spec, "head") else 10.0
-        l_val = 65.0
-        s.setPoint((0, 0, -k_val), (0, 0, -1))
-        s.setPoint((0, 0, l_val), (0, 0, 1))
+        k_val = spec.head.k_nominal if (hasattr(spec, "head") and spec.head) else 10.0
+        l_val = float(TEST_BOLT_LENGTH)
+        # Port 1: Tại đỉnh mũ bu lông (Z = -k_val) hướng ra ngoài -Z
+        # Port 2: Tại đỉnh đuôi ren bu lông (Z = l_val) hướng ra ngoài +Z
+        if hasattr(s, "setPoint"):
+            s.setPoint((0, 0, -k_val), (0, 0, -1))
+            s.setPoint((0, 0, l_val), (0, 0, 1))
         return bolt.unwrap()
 
     # --------------------------------------------------------------------------
-    # CHẾ ĐỘ 4: CỤM BU LÔNG LỤC GIÁC KÈM ĐAI ỐC (BOLT_AND_NUT)
+    # CHẾ ĐỘ 4: ĐAI ỐC LỤC GIÁC JIS B 1181 ĐỨNG ĐỘC LẬP (STANDALONE_NUT)
+    # --------------------------------------------------------------------------
+    elif TEST_MODE in ("STANDALONE_NUT", "NUT", "NUT_ONLY"):
+        nut = HexNut(
+            s=s,
+            bolt_size=TEST_NUT_SIZE,
+            series=TEST_NUT_SERIES,
+            has_hole=TEST_NUT_HAS_HOLE,
+        )
+        # Chiều cao m của đai ốc (m_nominal)
+        m_val = float(nut.spec.m) if hasattr(nut.spec, "m") else 14.8
+        # Port 1: Tại tâm mặt đáy đai ốc (Z = 0) hướng ra ngoài -Z
+        # Port 2: Tại tâm mặt đỉnh đai ốc (Z = m_val) hướng ra ngoài +Z
+        if hasattr(s, "setPoint"):
+            s.setPoint((0, 0, 0), (0, 0, -1))
+            s.setPoint((0, 0, m_val), (0, 0, 1))
+        return nut.unwrap()
+
+    # --------------------------------------------------------------------------
+    # CHẾ ĐỘ 5: CỤM BU LÔNG LỤC GIÁC KÈM ĐAI ỐC (BOLT_AND_NUT)
     # --------------------------------------------------------------------------
     elif TEST_MODE == "BOLT_AND_NUT":
-        bolt_sz = "M16"
-        l_val = 65.0
-        bolt = HexBolt(s=s, bolt_size=bolt_sz, length=l_val, with_nut=True)
-        k_val = bolt.spec.head.k_nominal if hasattr(bolt.spec, "head") else 10.0
-        s.setPoint((0, 0, -k_val), (0, 0, -1))
-        s.setPoint((0, 0, l_val), (0, 0, 1))
+        bolt_sz = TEST_BOLT_SIZE
+        l_val = float(TEST_BOLT_LENGTH)
+        bolt = HexBolt(
+            s=s,
+            bolt_size=bolt_sz,
+            length=l_val,
+            type_code=TEST_BOLT_TYPE,
+            series_override=TEST_BOLT_SERIES,
+            with_nut=True,
+            nut_series=TEST_NUT_SERIES,
+        )
+        k_val = bolt.spec.head.k_nominal if (hasattr(bolt.spec, "head") and bolt.spec.head) else 10.0
+        if hasattr(s, "setPoint"):
+            s.setPoint((0, 0, -k_val), (0, 0, -1))
+            s.setPoint((0, 0, l_val), (0, 0, 1))
         return bolt.unwrap()
 
     # --------------------------------------------------------------------------
-    # CHẾ ĐỘ 5: CỤM BU LÔNG + VÒNG ĐỆM JIS B 1256 + ĐAI ỐC JIS B 1181
+    # CHẾ ĐỘ 6: CỤM BU LÔNG + VÒNG ĐỆM JIS B 1256 + ĐAI ỐC JIS B 1181
     # --------------------------------------------------------------------------
     elif TEST_MODE == "BOLT_NUT_WASHER":
-        bolt_sz = "M16"
-        l_val = 65.0
-        hw = 3.0
-        grip = l_val - 14.8 - 5.0
-        bolt = HexBolt(s=s, bolt_size=bolt_sz, length=l_val, with_nut=True, grip_length=grip)
-        washer = PlainWasher(s=s, bolt_size=bolt_sz, series="ISO_NORMAL_A", has_hole=True)
+        bolt_sz = TEST_BOLT_SIZE
+        l_val = float(TEST_BOLT_LENGTH)
+        w_spec = get_washer_dimension(bolt_sz, TEST_WASHER_SERIES)
+        hw = float(w_spec.h_nominal) if w_spec else 3.0
+        nut_dim = get_nut_dimension(bolt_sz, TEST_NUT_SERIES)
+        m_nut = float(nut_dim.m_nominal) if nut_dim else 14.8
+        grip = max(l_val - m_nut - 5.0, 5.0)
+        bolt = HexBolt(
+            s=s,
+            bolt_size=bolt_sz,
+            length=l_val,
+            type_code=TEST_BOLT_TYPE,
+            series_override=TEST_BOLT_SERIES,
+            with_nut=True,
+            grip_length=grip,
+            nut_series=TEST_NUT_SERIES,
+        )
+        washer = PlainWasher(s=s, bolt_size=bolt_sz, series=TEST_WASHER_SERIES, has_hole=True)
         washer.translate((0, 0, grip - hw))
         bolt.uniteWith(washer)
 
-        k_val = bolt.spec.head.k_nominal if hasattr(bolt.spec, "head") else 10.0
-        s.setPoint((0, 0, -k_val), (0, 0, -1))
-        s.setPoint((0, 0, l_val), (0, 0, 1))
+        k_val = bolt.spec.head.k_nominal if (hasattr(bolt.spec, "head") and bolt.spec.head) else 10.0
+        if hasattr(s, "setPoint"):
+            s.setPoint((0, 0, -k_val), (0, 0, -1))
+            s.setPoint((0, 0, l_val), (0, 0, 1))
         return bolt.unwrap()
+
+    else:
+        raise ValueError(
+            f"Chế độ TEST_MODE='{TEST_MODE}' không hợp lệ! "
+            f"Các chế độ hỗ trợ: 'FLANGE_CONNECTION_COMBO', 'FLANGE_WITH_BOLTS', "
+            f"'STANDALONE_BOLT', 'STANDALONE_NUT', 'BOLT_AND_NUT', 'BOLT_NUT_WASHER'."
+        )
+
+
+if __name__ == "__main__":
+    class MockS:
+        def setPoint(self, pt, d):
+            print(f"  [Port] Point: {pt}, Dir: {d}")
+
+    mock_s = MockS()
+    print("=" * 70)
+    print("KIỂM THỬ TỰ ĐỘNG CÁC CHẾ ĐỘ TEST TRONG HOTRELOAD_IMPL.PY")
+    print("=" * 70)
+
+    # 1. Test Bu lông đứng riêng
+    print(f"\n>>> 1. Kiểm thử STANDALONE_BOLT ({TEST_BOLT_SIZE} x {TEST_BOLT_LENGTH}mm):")
+    orig_mode = TEST_MODE
+    TEST_MODE = "STANDALONE_BOLT"
+    res_bolt = run(mock_s)
+    print(f"  Result: {res_bolt}")
+
+    # 2. Test Đai ốc đứng riêng
+    print(f"\n>>> 2. Kiểm thử STANDALONE_NUT ({TEST_NUT_SIZE}, {TEST_NUT_SERIES}, has_hole={TEST_NUT_HAS_HOLE}):")
+    TEST_MODE = "STANDALONE_NUT"
+    res_nut = run(mock_s)
+    print(f"  Result: {res_nut}")
+
+    # 3. Test Chế độ gốc đang cấu hình
+    TEST_MODE = orig_mode
+    print(f"\n>>> 3. Kiểm thử Chế độ mặc định đang chọn ({TEST_MODE}):")
+    res_default = run(mock_s)
+    print(f"  Result: {res_default}")
+    print("\n" + "=" * 70)
+    print("ĐÃ KIỂM THỬ THÀNH CÔNG TẤT CẢ CÁC CHẾ ĐỘ!")
+    print("=" * 70)
+
 

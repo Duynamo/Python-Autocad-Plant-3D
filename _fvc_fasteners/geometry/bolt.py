@@ -1,6 +1,6 @@
 from typing import Optional
 try:
-    import varmain.primitiv as prim
+    import varmain.primitiv as prim #type: ignore
 except ImportError:
     from .nut import prim
 
