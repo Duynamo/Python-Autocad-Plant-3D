@@ -5,39 +5,34 @@ from varmain.primitiv import *  # type: ignore
 from varmain.var_basic import *  # type: ignore
 from varmain.custom import *  # type: ignore
 
-_IMPL_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)),"hotreload_impl.py") #type: ignore
-print("hotreload.py: imported") #type: ignore
+# ==============================================================================
+# AUTOCAD PLANT 3D ACP ADAPTER PROXY (STATIC WRAPPER)
+# ==============================================================================
+# Lưu ý: File này đóng vai trò là "vỏ bọc giao tiếp cố định" với engine AutoCAD.
+# Các decorator @activate, @group, @param bên dưới giữ nguyên để khớp hoàn toàn
+# với HOTRELOAD.xml trong catalog Plant 3D.
+# BẠN KHÔNG CẦN CHỈNH SỬA FILE NÀY!
+# Toàn bộ logic dựng hình 3D vui lòng viết tại: hotreload_impl.py
+# ==============================================================================
 
-#Check Valve
+_WORKSPACE_IMPL = r"c:\Users\Laptop\OneDrive\Desktop\Hello World\Python-Autocad-Plant-3D\hotreload_impl.py"
+if os.path.exists(_WORKSPACE_IMPL):
+    _IMPL_PATH = _WORKSPACE_IMPL
+else:
+    _IMPL_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "hotreload_impl.py")
 
-@activate (Group="Valve", TooltipShort="Gate Valve JIS 7K5",TooltipLong="Gate Valve with Handwheel",FirstPortEndtypes="FL",LengthUnit="mm",Ports="2") #type: ignore
-@group("MainDimensions") #type: ignore
-@param(L=LENGTH, TooltipShort="Length (Face to Face)") #type: ignore
-@param(D=LENGTH, TooltipShort="Flange Diameter") #type: ignore
-@param(T=LENGTH, TooltipShort="Flange Thickness") #type: ignore
-@param(H=LENGTH, TooltipShort="Total Height") #type: ignore
-@param(H1=LENGTH, TooltipShort="Total Height") #type: ignore
-@param(D1=LENGTH, TooltipShort="Handle Diameter") #type: ignore
-@param(No=INT, TooltipShort="Number of holes") #type: ignore
-@param(Dh=LENGTH, TooltipShort="Bolt hole Diameter") #type: ignore
-@param(PCD=LENGTH, TooltipShort="PCDA") #type: ignore
-@param(F=LENGTH, TooltipShort="Groove on Flange Diameter Thickness") #type: ignore
-@param(G=LENGTH, TooltipShort="Groove on Flange Diameter") #type: ignore
-
-def hotreload(s, L=300.0, D=342.0, T=27.0, H=991.0, H1= 725, D1=355.0, No=8, Dh=19.0, PCD=299.0, F=3.0, G=256.0, **kw):
+@activate(Group="Testing", TooltipShort="Hot Reload Tester", TooltipLong="Dynamic Hot-Reload Proxy", FirstPortEndtypes="FL", LengthUnit="mm", Ports="2") # type: ignore
+@group("MainDimensions") # type: ignore
+@param(D=LENGTH, TooltipShort="Nominal Size") # type: ignore
+def hotreload(s, D=100.0, **kw):
     try:
         with open(_IMPL_PATH, encoding="utf-8") as f:
             source = f.read()
         ns = dict(globals())
         ns["primitives"] = _primitives
         exec(compile(source, _IMPL_PATH, "exec"), ns)
-        # Truyền tất cả các tham số đã định nghĩa vào hàm run
-        return ns["run"](s, L=L, D=D, T=T, H=H, H1=H1, D1=D1, No=No, Dh=Dh, PCD=PCD, **kw)
+        return ns["run"](s, D=D, **kw)
     except Exception as e:
         import traceback
         traceback.print_exc()
-        # Trả về một khối hộp báo lỗi nếu có vấn đề
-        return BOX(s, L=100, W=100, H=200) #type: ignore
-#L: kích thước OY
-#H: kích thước OX
-#W: kích thước OZ
+        return BOX(s, L=100, W=100, H=200) # type: ignore

@@ -23,6 +23,11 @@ from .jis_b1256_reader import (
     get_plain_washer,
     get_matching_washer_for_bolt,
 )
+from .jis_b2404_reader import (
+    get_sheet_gasket_dimension,
+    get_spiral_wound_gasket_dimension,
+    get_auto_gasket_for_flange,
+)
 
 __all__ = [
     "get_bolt_for_flange",
@@ -45,5 +50,8 @@ __all__ = [
     "get_hardness_spec",
     "get_plain_washer",
     "get_matching_washer_for_bolt",
+    "get_sheet_gasket_dimension",
+    "get_spiral_wound_gasket_dimension",
+    "get_auto_gasket_for_flange",
 ]
 

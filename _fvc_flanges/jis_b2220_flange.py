@@ -17,10 +17,11 @@ class JisFlangeObject:
     """Wrapper cho đối tượng Solid 3D mặt bích JIS trong AutoCAD Plant 3D.
     Hỗ trợ method chaining: .rotateY(90).translate((x, y, z))
     """
-    def __init__(self, shape, dim: FlangeDimensions, bolt=None):
+    def __init__(self, shape, dim: FlangeDimensions, bolt=None, material: str = "CARBON_STEEL"):
         self._shape = shape
         self.dim = dim
         self.bolt = bolt
+        self.material = material
 
     def rotateX(self, deg: float):
         self._shape.rotateX(deg)
@@ -83,7 +84,8 @@ def JisB2220Flange(
     has_hub: bool = False,
     has_bore: bool = False,
     has_bolts: bool = False,
-    bolt_type: str = "HEX"
+    bolt_type: str = "HEX",
+    material: str = "CARBON_STEEL"
 ) -> JisFlangeObject:
     """Hàm Factory tạo mặt bích thép tiêu chuẩn Nhật Bản JIS B 2220.
     
@@ -99,6 +101,7 @@ def JisB2220Flange(
         has_bore: True nếu muốn khoét rỗng lỗ tâm d0 hoặc d_bore.
         has_bolts: True nếu muốn tự động dựng cụm bu-lông từ _fvc_fasteners quanh vòng chia C.
         bolt_type: 'HEX' (Bu-lông lục giác) hoặc 'STUD' (Gu-zông 2 đầu ren).
+        material: Mác vật liệu bích (mặc định 'CARBON_STEEL', ví dụ 'SUS304', 'SUS316'...)
         
     Returns:
         JisFlangeObject: Đối tượng Solid bọc ngoài với method xoay, dịch chuyển, thuộc tính .dim và .bolt.
@@ -140,7 +143,7 @@ def JisB2220Flange(
             shape.uniteWith(bolt_obj.unwrap())
             bolt_obj.erase()
             
-    return JisFlangeObject(shape, dim, bolt_info)
+    return JisFlangeObject(shape, dim, bolt_info, material=material)
 
 # Alias tương thích ngược
 JisFlange = JisB2220Flange

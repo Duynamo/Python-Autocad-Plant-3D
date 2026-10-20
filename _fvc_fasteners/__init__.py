@@ -6,6 +6,12 @@ from .models.jis_b1217_specs import MetricBoltSpec, FlangeBoltSelection
 from .models.jis_b1180_specs import HexHeadSpec, BoltTypeSpec, HexBoltSpec
 from .models.jis_b1181_specs import NutDimensionSpec, NutTypeSpec, HexNutSpec
 from .models.jis_b1256_specs import WasherDimensionSpec, WasherTypeSpec, PlainWasherSpec
+from .models.jis_b2404_specs import (
+    SheetGasketDimension,
+    SpiralWoundGasketDimension,
+    PtfeJacketGasketDimension,
+    GasketSpec,
+)
 from .db.jis_b1217_reader import get_bolt_for_flange, get_metric_bolt_spec
 from .db.jis_b1180_reader import (
     get_hex_bolt,
@@ -31,6 +37,11 @@ from .db.jis_b1256_reader import (
     get_plain_washer,
     get_matching_washer_for_bolt,
 )
+from .db.jis_b2404_reader import (
+    get_sheet_gasket_dimension,
+    get_spiral_wound_gasket_dimension,
+    get_auto_gasket_for_flange,
+)
 from .geometry.nut import HexNut, FastenerObject, build_hex_prism
 from .geometry.bolt import HexBolt
 from .geometry.stud import StudBolt
@@ -50,6 +61,10 @@ __all__ = [
     "WasherDimensionSpec",
     "WasherTypeSpec",
     "PlainWasherSpec",
+    "SheetGasketDimension",
+    "SpiralWoundGasketDimension",
+    "PtfeJacketGasketDimension",
+    "GasketSpec",
     # Reader functions
     "get_bolt_for_flange",
     "get_metric_bolt_spec",
@@ -71,6 +86,9 @@ __all__ = [
     "get_hardness_spec",
     "get_plain_washer",
     "get_matching_washer_for_bolt",
+    "get_sheet_gasket_dimension",
+    "get_spiral_wound_gasket_dimension",
+    "get_auto_gasket_for_flange",
     # 3D Geometries
     "HexNut",
     "HexBolt",

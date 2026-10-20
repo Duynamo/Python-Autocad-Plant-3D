@@ -74,6 +74,16 @@ class FastenerObject:
                 self._shape.subtractFrom(other)
         return self
 
+    def intersectWith(self, other):
+        if self._shape is not None:
+            if hasattr(other, "_shape") and other._shape is not None:
+                self._shape.intersectWith(other._shape)
+                other._shape.erase()
+            elif not hasattr(other, "_shape") and other is not None:
+                self._shape.intersectWith(other)
+                other.erase()
+        return self
+
     def erase(self):
         if self._shape is not None:
             self._shape.erase()
@@ -86,41 +96,29 @@ def build_hex_prism(s, width_across_flats: float, height: float):
     """Dựng lăng trụ lục giác đều (Hexagonal Prism) chuẩn xác bằng cách gọt khối trụ tròn.
     Gốc tọa độ: Đáy tại Z = 0, Đỉnh tại Z = height.
     
-    Args:
-        s: Subpart container
-        width_across_flats: Bề rộng giác cờ-lê s (mm)
-        height: Chiều cao lăng trụ (mm)
+    Phương pháp:
+    1. Khởi tạo khối trụ tròn ngoại tiếp CYLINDER bán kính R = s / sqrt(3), chiều cao height.
+       -> Đảm bảo 100% chiều cao chuẩn xác bằng height và đáy nằm tại Z = 0.
+    2. Dùng hộp gọt BOX tịnh tiến ra khoảng cách dist_cut theo trục X, sau đó mới xoay rotateZ
+       quanh gốc (0,0) ở 6 góc: 0°, 60°, 120°, 180°, 240°, 300°.
+       -> Mặt cắt luôn nằm đúng khoảng cách s / 2 từ tâm, gọt phẳng thành 6 mặt lục giác hoàn hảo.
     """
     s_val = float(width_across_flats)
     h_val = float(height)
     
     # Bán kính đường tròn ngoại tiếp đỉnh lục giác: R = (s / 2) / cos(30 deg) = s / sqrt(3)
     r_circ = s_val / math.sqrt(3.0)
-    
-    # 1. Khởi tạo khối trụ tròn ngoại tiếp (đáy tại Z = 0, đỉnh tại Z = h_val)
     hex_solid = prim.CYLINDER(s, R=r_circ, H=h_val, O=0)
     
-    # 2. Tạo các hộp cắt (cutter) để gọt phẳng 6 mặt cách tâm s/2
     t_cut = s_val
     w_cut = r_circ * 3.0
-    h_cut = h_val * 3.0
+    h_cut = h_val * 2.5
     dist_cut = s_val / 2.0 + t_cut / 2.0
     
-    # Cắt 3 cặp mặt đối xứng (0 deg, 60 deg, 120 deg)
-    for deg in [0.0, 60.0, 120.0]:
-        rad = math.radians(deg)
-        cos_a = math.cos(rad)
-        sin_a = math.sin(rad)
-        
-        # Hộp cắt phía dương (+dist_cut)
-        c1 = prim.BOX(s, L=t_cut, W=w_cut, H=h_cut).rotateZ(deg).translate((dist_cut * cos_a, dist_cut * sin_a, h_val / 2.0))
-        hex_solid.subtractFrom(c1)
-        c1.erase()
-        
-        # Hộp cắt phía âm (-dist_cut)
-        c2 = prim.BOX(s, L=t_cut, W=w_cut, H=h_cut).rotateZ(deg).translate((-dist_cut * cos_a, -dist_cut * sin_a, h_val / 2.0))
-        hex_solid.subtractFrom(c2)
-        c2.erase()
+    for deg in [0.0, 60.0, 120.0, 180.0, 240.0, 300.0]:
+        c = prim.BOX(s, L=t_cut, W=w_cut, H=h_cut).translate((dist_cut, 0, h_val / 2.0)).rotateZ(deg)
+        hex_solid.subtractFrom(c)
+        c.erase()
         
     return hex_solid
 
@@ -133,7 +131,7 @@ def HexNut(s, bolt_size: str = "M16", series: str = "ISO_STYLE_1", has_hole: boo
         s: Subpart container
         bolt_size: Cỡ ren ('M12', 'M16', 'M20', 'M30x3'...)
         series: Dòng series ('ISO_STYLE_1', 'ISO_STYLE_2', 'ISO_STYLE_0_THIN', 'ANNEX_JA_REGULAR'...)
-        has_hole: True nếu muốn khoét rỗng lỗ ren ở giữa
+        has_hole: True nếu khoét rỗng lỗ ren ở giữa (mặc định True để tròng vào thân bu lông)
     """
     from ..db.jis_b1181_reader import get_nut_dimension
     
@@ -162,5 +160,6 @@ def HexNut(s, bolt_size: str = "M16", series: str = "ISO_STYLE_1", has_hole: boo
         hole.erase()
         
     return FastenerObject(nut_solid, spec)
+
 
 
